@@ -223,7 +223,7 @@
     .fee-table tr + tr td { border-top: 1px solid var(--cream-dark); }
     .fee-table td { padding: 0.85rem 0; font-size: 1rem; color: var(--text-mid); }
     .fee-table td:last-child { text-align: right; font-weight: 700; color: var(--green-deep); font-family: var(--serif); }
-    .membership-visual { background: linear-gradient(145deg, #1a3a2a 0%, #2d6a4f 55%, #52b788 100%); min-height: 480px; display: flex; align-items: center; justify-content: center; }
+    .membership-visual { background: var(--green-deep); min-height: 480px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
     .membership-visual-logo { width: 140px; opacity: 0.35; }
     .membership-visual-logo .svg-logo-v { width: 100%; height: auto; display: block; }
     .membership-visual-logo .svg-logo-v text { fill: #ffffff !important; }
@@ -1029,7 +1029,8 @@
     <a href="#contact" class="btn btn-primary" style="margin-top:2rem;display:inline-block;">Ask About Membership</a>
   </div>
   <div class="membership-visual reveal">
-    <div class="membership-visual-logo"><svg class="svg-logo-v"
+    <img src="images/leftside.jpg" alt="Croquet at Worth Park" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:block;" />
+    <div class="membership-visual-logo" style="display:none"><svg class="svg-logo-v"
    width="100%"
    height="100%"
    viewBox="0 0 48.654415 40.239201"
