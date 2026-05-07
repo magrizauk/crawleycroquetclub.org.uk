@@ -142,12 +142,6 @@
     }
     .svg-logo-hero { width: 100%; height: auto; display: block; }
     .svg-logo-hero text { fill: #f0ead8 !important; }
-
-    .hero-badge {
-      display: inline-block; border: 1px solid var(--gold); color: var(--gold-light);
-      font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase;
-      padding: 0.4rem 1rem; margin-bottom: 1.8rem; font-weight: 700;
-    }
     .hero-content h1 { font-family: var(--serif); font-size: clamp(3rem, 6vw, 5.2rem); color: var(--white); line-height: 1.05; margin-bottom: 1.4rem; }
     .hero-content h1 em { font-style: italic; color: var(--gold-light); }
     .hero-content p { font-size: 1.15rem; color: rgba(247,243,234,0.88); line-height: 1.8; margin-bottom: 2.4rem; font-weight: 300; max-width: 500px; }
@@ -168,7 +162,6 @@
     /* ABOUT */
     #about { background: var(--white); display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
     .about-image-wrap { position: relative; }
-    .about-img-block { width: 100%; height: 460px; background: linear-gradient(135deg, #2d6a4f, #52b788 60%, #c9a84c); border-radius: 2px; }
     .about-image-badge { position: absolute; bottom: -1.5rem; right: -1.5rem; background: var(--green-deep); color: var(--gold-light); padding: 1.4rem 1.8rem; font-family: var(--serif); text-align: center; }
     .about-image-badge strong { display: block; font-size: 2.2rem; line-height: 1; }
     .about-image-badge span { font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; font-family: var(--sans); font-weight: 700; }
@@ -212,7 +205,6 @@
     .why-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3rem; }
     .why-card { background: var(--white); padding: 2.5rem 2rem; border-top: 3px solid var(--green-light); transition: transform 0.25s, box-shadow 0.25s; }
     .why-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(26,58,42,0.1); }
-    .why-card-icon { display: none; }
     .why-card h3 {
       font-family: var(--serif);
       font-size: 1.3rem;
@@ -232,9 +224,6 @@
     .fee-table td { padding: 0.85rem 0; font-size: 1rem; color: var(--text-mid); }
     .fee-table td:last-child { text-align: right; font-weight: 700; color: var(--green-deep); font-family: var(--serif); }
     .membership-visual { background: var(--green-deep); min-height: 480px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-    .membership-visual-logo { width: 140px; opacity: 0.35; }
-    .membership-visual-logo .svg-logo-v { width: 100%; height: auto; display: block; }
-    .membership-visual-logo .svg-logo-v text { fill: #ffffff !important; }
 
     /* CALENDAR */
     #calendar { background: var(--cream-dark); }
@@ -333,8 +322,6 @@
     .modal input:focus, .modal select:focus, .modal textarea:focus { border-color: var(--green-mid); }
     .modal textarea { resize: vertical; min-height: 60px; }
     .modal-actions { display: flex; gap: 0.8rem; margin-top: 1.5rem; justify-content: flex-end; }
-    .modal-actions .btn-danger { background: #d40000; color: white; }
-    .modal-actions .btn-danger:hover { background: #a00000; }
 
     /* LOGIN MODAL */
     #login-modal .modal { max-width: 360px; }
@@ -456,7 +443,7 @@
       max-width: 75vw;
       margin-bottom: 3.5rem;
     }
-    .svg-logo-hero { width: 100%; height: auto; display: block; }
+    
     .svg-logo-hero text { fill: #f0ead8 !important; }
       section, #schedule, #calendar { padding: 4rem 1.5rem; }
       #about, #location { grid-template-columns: 1fr; gap: 2.5rem; padding: 4rem 1.5rem; }
@@ -985,32 +972,26 @@
     </div>
     <div class="why-cards">
       <div class="why-card reveal">
-        <div class="why-card-icon">&#127968;</div>
         <h3>Beautiful Setting</h3>
         <p>Our lawns at Worth Park are set within stunning Victorian parkland &mdash; a genuinely lovely place to spend a summer afternoon outdoors.</p>
       </div>
       <div class="why-card reveal">
-        <div class="why-card-icon">&#129309;</div>
         <h3>Wonderfully Social</h3>
         <p>Croquet is a game of tactics, conversation, and good humour. Our members come from all walks of life and all parts of Crawley &mdash; the only thing they have in common is that they love the game and the company.</p>
       </div>
       <div class="why-card reveal">
-        <div class="why-card-icon">&#129504;</div>
         <h3>Surprisingly Strategic</h3>
         <p>Behind the leisurely pace lies a genuinely tactical game. Easy to pick up, endlessly satisfying to master &mdash; and it keeps the mind sharp.</p>
       </div>
       <div class="why-card reveal">
-        <div class="why-card-icon">&#127939;</div>
         <h3>Come As You Are</h3>
         <p>Forget the stereotype. Club days are relaxed and informal &mdash; come in whatever you&rsquo;re comfortable in. Whites are only worn in competitions, and even then only if you choose to enter one.</p>
       </div>
       <div class="why-card reveal">
-        <div class="why-card-icon">&#9728;&#65039;</div>
         <h3>Fresh Air &amp; Exercise</h3>
         <p>A wonderful low-impact way to stay active through the summer months &mdash; gentle on the joints, great for wellbeing.</p>
       </div>
       <div class="why-card reveal">
-        <div class="why-card-icon">&#10024;</div>
         <h3>Free First Visit</h3>
         <p>Not sure if it&rsquo;s for you? Come along for a free introductory lesson and your first three games on us &mdash; no experience, equipment, or special clothing needed. There&rsquo;s absolutely no obligation, just a warm welcome.</p>
       </div>
@@ -1038,235 +1019,6 @@
   </div>
   <div class="membership-visual reveal">
     <img src="images/leftside.jpg" alt="Croquet at Worth Park" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:block;" />
-    <div class="membership-visual-logo" style="display:none"><svg class="svg-logo-v"
-   width="100%"
-   height="100%"
-   viewBox="0 0 48.654415 40.239201"
-   id="svg1"
-   xmlns="http://www.w3.org/2000/svg">
-  <sodipodi:namedview
-     id="namedview1"
-     pagecolor="#ffffff"
-     bordercolor="#000000"
-     borderopacity="0.25" />
-  <defs
-     id="defs1">
-    <clipPath
-       id="v2_bc">
-      <circle
-         cx="340"
-         cy="330"
-         r="255"
-         id="circle1" />
-    </clipPath>
-    <clipPath
-       id="clipPath2">
-      <circle
-         cx="340"
-         cy="330"
-         r="255"
-         id="circle2" />
-    </clipPath>
-    <clipPath
-       id="clipPath3">
-      <circle
-         cx="340"
-         cy="330"
-         r="255"
-         id="circle3" />
-    </clipPath>
-    <clipPath
-       id="clipPath4">
-      <circle
-         cx="340"
-         cy="330"
-         r="255"
-         id="circle4" />
-    </clipPath>
-    <clipPath
-       id="clipPath5">
-      <circle
-         cx="340"
-         cy="330"
-         r="255"
-         id="circle5" />
-    </clipPath>
-    <clipPath
-       id="clipPath6">
-      <circle
-         cx="340"
-         cy="330"
-         r="255"
-         id="circle6" />
-    </clipPath>
-    <clipPath
-       id="clipPath7">
-      <circle
-         cx="340"
-         cy="330"
-         r="255"
-         id="circle7" />
-    </clipPath>
-    <clipPath
-       id="clipPath8">
-      <circle
-         cx="340"
-         cy="330"
-         r="255"
-         id="circle8" />
-    </clipPath>
-  </defs>
-  <g
-     id="layer1"
-     transform="translate(-94.067644,-127.49196)">
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="99.553612"
-       y="140.11342"
-       id="text9">C</text>
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="106.96608"
-       y="140.11342"
-       id="text6">r</text>
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="110.04187"
-       y="140.11342"
-       id="text5">a</text>
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="116.35466"
-       y="140.11342"
-       id="text4">w</text>
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="123.9201"
-       y="140.11342"
-       id="text3">l</text>
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="126.14425"
-       y="140.11342"
-       id="text2">e</text>
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="132.17592"
-       y="140.11342"
-       id="text1">y</text>
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="99.553619"
-       y="150.65221"
-       id="text16">C</text>
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="106.96609"
-       y="150.65221"
-       id="text15">r</text>
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="110.04187"
-       y="150.65221"
-       id="text14">o</text>
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="116.11489"
-       y="150.65221"
-       id="text13">q</text>
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="122.41941"
-       y="150.65221"
-       id="text12">u</text>
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="128.09557"
-       y="150.65221"
-       id="text11">e</text>
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="134.12723"
-       y="150.65221"
-       id="text10">t</text>
-    <g
-       id="g459"
-       transform="translate(47.081131,51.755806)">
-      <g
-         id="g38"
-         transform="translate(0.62907661,0.32944237)">
-        <circle
-           cx="77.683983"
-           cy="108.06097"
-           r="1.6944654"
-           fill="none"
-           stroke="#1a3a6e"
-           stroke-width="0.529167"
-           id="circle38"
-           style="fill:#d40000;fill-opacity:1;stroke:#aa0000;stroke-width:0.05;stroke-dasharray:none" />
-      </g>
-      <g
-         id="g230"
-         transform="translate(4.6208082,0.32944237)">
-        <circle
-           cx="77.683983"
-           cy="108.06097"
-           r="1.6944654"
-           fill="none"
-           stroke="#1a3a6e"
-           stroke-width="0.529167"
-           id="circle229"
-           style="fill:#1a1a1a;fill-opacity:1;stroke:#000000;stroke-width:0.05;stroke-dasharray:none" />
-      </g>
-      <g
-         id="g344"
-         transform="translate(0.62907381,-3.6622892)">
-        <circle
-           cx="77.683983"
-           cy="108.06097"
-           r="1.6944654"
-           fill="none"
-           stroke="#1a3a6e"
-           stroke-width="0.529167"
-           id="circle343"
-           style="fill:#ffd42a;fill-opacity:1;stroke:#d4aa00;stroke-width:0.05;stroke-dasharray:none" />
-      </g>
-      <g
-         id="g458"
-         transform="translate(4.6208082,-3.6622892)">
-        <circle
-           cx="77.683983"
-           cy="108.06097"
-           r="1.6944654"
-           fill="none"
-           stroke="#1a3a6e"
-           stroke-width="0.529167"
-           id="circle457"
-           style="fill:#2a2aff;fill-opacity:1;stroke:#0000d4;stroke-width:0.05;stroke-dasharray:none" />
-      </g>
-    </g>
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="99.553619"
-       y="161.19099"
-       id="text20">C</text>
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="106.96609"
-       y="161.19099"
-       id="text19">l</text>
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="109.19024"
-       y="161.19099"
-       id="text18">u</text>
-    <text
-       style="font-size:8.46667px;line-height:0;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic, Normal';text-align:center;letter-spacing:0.529167px;stroke-width:0.044"
-       x="114.86638"
-       y="161.19099"
-       id="text17">b</text>
-  </g>
-</svg></div>
   </div>
 </section>
 
