@@ -7,7 +7,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCNF0Frimcii1tdnP9bQRodKUcI8uLJst0",
@@ -26,7 +26,7 @@
     window._db   = db;
     window._auth = auth;
     window._fsModules = { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot };
-    window._authModules = { signInWithEmailAndPassword, signOut, onAuthStateChanged };
+    window._authModules = { signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail };
 
     // Auth state listener
     onAuthStateChanged(auth, function(user) {
@@ -436,6 +436,7 @@
     /* RESPONSIVE */
     @media (max-width: 900px) {
       /* nav collapse handled by JS via .nav-collapsed class */
+      .svg-logo-nav { height: 24px; }
       #hero { padding: 6rem 2rem 4rem; min-height: 90vh; }
       .hero-logo {
       display: block;
@@ -1370,9 +1371,19 @@
     <label>Password</label>
     <input type="password" id="adminPassword" placeholder="Password" autocomplete="current-password" />
     <p style="font-size:0.82rem;color:#d40000;margin-top:0.5rem;display:none;" id="loginError">Incorrect email or password. Please try again.</p>
+    <p style="font-size:0.82rem;margin-top:0.8rem;text-align:right;">
+      <a href="#" id="forgotPasswordLink" style="color:var(--green-mid);text-decoration:none;font-weight:700;">Forgot password?</a>
+    </p>
     <div class="modal-actions">
       <button class="btn btn-outline" id="loginCancelBtn" style="color:var(--text-mid);border-color:var(--cream-dark)">Cancel</button>
       <button class="btn btn-primary" id="loginSubmitBtn">Log In</button>
+    </div>
+    <div id="resetSection" style="display:none;margin-top:1.2rem;padding-top:1.2rem;border-top:1px solid var(--cream-dark);">
+      <p style="font-size:0.88rem;color:var(--text-mid);margin-bottom:0.6rem;font-weight:300;">Enter your email address and we'll send you a reset link.</p>
+      <input type="email" id="resetEmail" placeholder="your@email.com" style="width:100%;padding:0.6rem 0.8rem;border:1px solid var(--cream-dark);font-family:var(--sans);font-size:1rem;background:var(--cream);margin-bottom:0.8rem;" />
+      <p style="font-size:0.82rem;color:#2d6a4f;display:none;margin-bottom:0.6rem;" id="resetSuccess">Reset email sent — please check your inbox.</p>
+      <p style="font-size:0.82rem;color:#d40000;display:none;margin-bottom:0.6rem;" id="resetError">Could not send reset email. Please check the address.</p>
+      <button class="btn btn-primary" id="resetSubmitBtn" style="width:100%;">Send Reset Email</button>
     </div>
   </div>
 </div>
@@ -1686,6 +1697,37 @@
 
   document.getElementById('loginCancelBtn').addEventListener('click', function() {
     document.getElementById('login-modal').classList.remove('open');
+    document.getElementById('resetSection').style.display = 'none';
+    document.getElementById('resetSuccess').style.display = 'none';
+    document.getElementById('resetError').style.display = 'none';
+  });
+
+  document.getElementById('forgotPasswordLink').addEventListener('click', function(e) {
+    e.preventDefault();
+    var resetSection = document.getElementById('resetSection');
+    var isVisible = resetSection.style.display !== 'none';
+    resetSection.style.display = isVisible ? 'none' : 'block';
+    if (!isVisible) {
+      var email = document.getElementById('adminEmail').value;
+      if (email) document.getElementById('resetEmail').value = email;
+      document.getElementById('resetEmail').focus();
+    }
+  });
+
+  document.getElementById('resetSubmitBtn').addEventListener('click', function() {
+    var email = document.getElementById('resetEmail').value.trim();
+    var successEl = document.getElementById('resetSuccess');
+    var errorEl   = document.getElementById('resetError');
+    successEl.style.display = 'none';
+    errorEl.style.display   = 'none';
+    if (!email) { document.getElementById('resetEmail').focus(); return; }
+    var sendPasswordResetEmail = window._authModules.sendPasswordResetEmail;
+    if (!sendPasswordResetEmail) {
+      errorEl.style.display = 'block'; return;
+    }
+    sendPasswordResetEmail(window._auth, email)
+      .then(function() { successEl.style.display = 'block'; })
+      .catch(function() { errorEl.style.display = 'block'; });
   });
 
   document.getElementById('loginSubmitBtn').addEventListener('click', function() { doLogin(); });
