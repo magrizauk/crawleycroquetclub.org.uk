@@ -479,7 +479,8 @@
 <body>
 
 <!-- NAV -->
-<nav>
+<a href="#about" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" onfocus="this.style.cssText='position:fixed;top:0;left:0;width:auto;height:auto;overflow:visible;background:var(--green-deep);color:var(--cream);padding:0.8rem 1.5rem;z-index:9999;font-family:sans-serif;font-weight:700;'">Skip to main content</a>
+<nav aria-label="Main navigation">
   <a class="nav-logo-wrap" href="#"><svg class="svg-logo-h svg-logo-nav"
    width="100%"
    height="100%"
@@ -914,6 +915,7 @@
 
 </section>
 <!-- ABOUT -->
+<main id="main-content">
 <section id="about">
   <div class="about-image-wrap reveal">
     <img src="images/lawn.jpg" alt="The croquet lawns at Worth Park, Crawley" style="width:100%;height:460px;object-fit:cover;border-radius:2px;display:block;" />
@@ -1145,6 +1147,8 @@
   </div>
 </section>
 
+</main>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo-wrap"><svg class="svg-logo-h"
@@ -1316,7 +1320,11 @@
   </g>
 </svg></div>
   <p>Worth Park, Crawley &middot; Season: mid-April to end of September</p>
-  <p>&copy; 2025 Crawley Croquet Club</p>
+  <p style="margin-top:0.5rem;">
+    Affiliated to <a href="https://www.croquetengland.org.uk" target="_blank" rel="noopener" style="color:rgba(247,243,234,0.5);text-decoration:none;font-weight:700;">Croquet England</a>
+    &middot; <a href="https://www.croquet.org.uk/?Service=Federations" target="_blank" rel="noopener" style="color:rgba(247,243,234,0.5);text-decoration:none;font-weight:700;">Croquet South East</a>
+  </p>
+  <p style="margin-top:0.5rem;">&copy; <span id="copyrightYear">2025</span> Crawley Croquet Club &middot; <a href="gallery.html" style="color:rgba(247,243,234,0.5);text-decoration:none;">Gallery</a> &middot; <a href="policies.html" style="color:rgba(247,243,234,0.5);text-decoration:none;">Privacy &amp; Safeguarding</a></p>
 </footer>
 
 <!-- EVENT VIEW MODAL (non-admin) -->
@@ -1337,7 +1345,7 @@
   <div class="modal">
     <h3 id="eventModalTitle">Add Event</h3>
     <label>Event Title</label>
-    <input type="text" id="evTitle" placeholder="e.g. Club Championship" />
+    <input type="text" id="evTitle" placeholder="e.g. Club Championship" aria-label="Event title" />
     <label>Type</label>
     <select id="evType">
       <option value="competition">Competition</option>
@@ -1346,7 +1354,7 @@
       <option value="other">Other</option>
     </select>
     <label>Date</label>
-    <input type="date" id="evDate" />
+    <input type="date" id="evDate" aria-label="Event date" />
     <label>Notes (optional)</label>
     <textarea id="evNotes" placeholder="Any additional details..."></textarea>
     <div class="modal-actions">
@@ -1363,9 +1371,9 @@
     <h3>Admin Login</h3>
     <p style="font-size:0.85rem;color:var(--text-mid);margin-bottom:1rem;font-weight:300;">Sign in to add or edit events.</p>
     <label>Email</label>
-    <input type="email" id="adminEmail" placeholder="your@email.com" autocomplete="email" />
+    <input type="email" id="adminEmail" placeholder="your@email.com" autocomplete="email" aria-label="Email address" />
     <label>Password</label>
-    <input type="password" id="adminPassword" placeholder="Password" autocomplete="current-password" />
+    <input type="password" id="adminPassword" placeholder="Password" autocomplete="current-password" aria-label="Password" />
     <p style="font-size:0.82rem;color:#d40000;margin-top:0.5rem;display:none;" id="loginError">Incorrect email or password. Please try again.</p>
     <p style="font-size:0.82rem;margin-top:0.8rem;text-align:right;">
       <a href="#" id="forgotPasswordLink" style="color:var(--green-mid);text-decoration:none;font-weight:700;">Forgot password?</a>
@@ -1376,7 +1384,7 @@
     </div>
     <div id="resetSection" style="display:none;margin-top:1.2rem;padding-top:1.2rem;border-top:1px solid var(--cream-dark);">
       <p style="font-size:0.88rem;color:var(--text-mid);margin-bottom:0.6rem;font-weight:300;">Enter your email address and we'll send you a reset link.</p>
-      <input type="email" id="resetEmail" placeholder="your@email.com" style="width:100%;padding:0.6rem 0.8rem;border:1px solid var(--cream-dark);font-family:var(--sans);font-size:1rem;background:var(--cream);margin-bottom:0.8rem;" />
+      <input type="email" id="resetEmail" placeholder="your@email.com" aria-label="Email address for password reset" style="width:100%;padding:0.6rem 0.8rem;border:1px solid var(--cream-dark);font-family:var(--sans);font-size:1rem;background:var(--cream);margin-bottom:0.8rem;" />
       <p style="font-size:0.82rem;color:#2d6a4f;display:none;margin-bottom:0.6rem;" id="resetSuccess">Reset email sent — please check your inbox.</p>
       <p style="font-size:0.82rem;color:#d40000;display:none;margin-bottom:0.6rem;" id="resetError">Could not send reset email. Please check the address.</p>
       <button class="btn btn-primary" id="resetSubmitBtn" style="width:100%;">Send Reset Email</button>
@@ -1385,6 +1393,8 @@
 </div>
 
 <script>
+  document.getElementById('copyrightYear').textContent = new Date().getFullYear();
+
   // ── NAV SCROLL: show logo once hero logo scrolls out of view ──
   (function() {
     var nav = document.querySelector('nav');
