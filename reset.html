@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reset Password — Crawley Croquet Club</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+    :root {
+      --green-deep:  #1a3a2a;
+      --green-mid:   #2d6a4f;
+      --green-light: #52b788;
+      --cream:       #f7f3ea;
+      --cream-dark:  #ede8d8;
+      --gold:        #c9a84c;
+      --white:       #ffffff;
+      --text-dark:   #1c1c1c;
+      --text-mid:    #3d4a3a;
+      --serif:       'Libre Baskerville', Georgia, serif;
+      --sans:        'Lato', 'Helvetica Neue', Arial, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--sans);
+      background: var(--cream);
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .card {
+      background: var(--white);
+      border-top: 4px solid var(--green-mid);
+      padding: 3rem 2.5rem;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 8px 32px rgba(26,58,42,0.08);
+    }
+    .logo {
+      display: block;
+      width: 180px;
+      margin: 0 auto 2rem;
+    }
+    h1 {
+      font-family: var(--serif);
+      font-size: 1.6rem;
+      color: var(--green-deep);
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+    p.subtitle {
+      font-size: 0.95rem;
+      color: var(--text-mid);
+      font-weight: 300;
+      text-align: center;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      margin-bottom: 0.4rem;
+      margin-top: 1.2rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--cream-dark);
+      font-family: var(--sans);
+      font-size: 1rem;
+      color: var(--text-dark);
+      background: var(--cream);
+      outline: none;
+      transition: border-color 0.2s;
+      border-radius: 2px;
+    }
+    input:focus { border-color: var(--green-mid); }
+    .btn {
+      display: block;
+      width: 100%;
+      margin-top: 1.8rem;
+      padding: 0.9rem;
+      background: var(--green-deep);
+      color: var(--cream);
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: var(--green-mid); }
+    .btn:disabled { background: #aaa; cursor: not-allowed; }
+    .message {
+      margin-top: 1.2rem;
+      padding: 0.9rem 1.1rem;
+      border-radius: 2px;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      display: none;
+    }
+    .message.success { background: rgba(82,183,136,0.15); color: #1a5c2a; border: 1px solid rgba(82,183,136,0.4); }
+    .message.error   { background: rgba(212,0,0,0.08);   color: #a00000; border: 1px solid rgba(212,0,0,0.25); }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.88rem;
+      color: var(--green-mid);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .back-link:hover { color: var(--green-deep); }
+    .spinner {
+      display: none;
+      text-align: center;
+      padding: 2rem 0;
+      color: var(--text-mid);
+      font-size: 0.95rem;
+      font-weight: 300;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div id="loadingView" class="spinner">Verifying reset link&hellip;</div>
+
+    <div id="resetView" style="display:none">
+      <h1>Reset Password</h1>
+      <p class="subtitle">Enter your new password below.</p>
+      <label for="newPassword">New Password</label>
+      <input type="password" id="newPassword" placeholder="At least 8 characters" autocomplete="new-password" />
+      <label for="confirmPassword">Confirm Password</label>
+      <input type="password" id="confirmPassword" placeholder="Repeat new password" autocomplete="new-password" />
+      <button class="btn" id="submitBtn">Set New Password</button>
+      <div class="message" id="message"></div>
+    </div>
+
+    <div id="successView" style="display:none">
+      <h1>Password Updated</h1>
+      <p class="subtitle">Your password has been reset successfully. You can now log in to the club calendar.</p>
+      <a href="index.html" class="btn" style="text-align:center;text-decoration:none;display:block;">Go to the Website</a>
+    </div>
+
+    <div id="errorView" style="display:none">
+      <h1>Link Expired</h1>
+      <p class="subtitle">This password reset link has expired or already been used. Please request a new one from the admin login page.</p>
+      <a href="index.html" class="btn" style="text-align:center;text-decoration:none;display:block;">Back to Website</a>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, verifyPasswordResetCode, confirmPasswordReset } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCNF0Frimcii1tdnP9bQRodKUcI8uLJst0",
+      authDomain: "crawley-croquet-club.firebaseapp.com",
+      projectId: "crawley-croquet-club",
+      storageBucket: "crawley-croquet-club.firebasestorage.app",
+      messagingSenderId: "460114961964",
+      appId: "1:460114961964:web:48df356888cd2d058d1389"
+    };
+
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Extract oobCode from URL
+    const params  = new URLSearchParams(window.location.search);
+    const oobCode = params.get('oobCode');
+
+    const loadingView = document.getElementById('loadingView');
+    const resetView   = document.getElementById('resetView');
+    const successView = document.getElementById('successView');
+    const errorView   = document.getElementById('errorView');
+    const message     = document.getElementById('message');
+    const submitBtn   = document.getElementById('submitBtn');
+
+    function showMessage(text, type) {
+      message.textContent = text;
+      message.className   = 'message ' + type;
+      message.style.display = 'block';
+    }
+
+    if (!oobCode) {
+      loadingView.style.display = 'none';
+      errorView.style.display   = 'block';
+    } else {
+      loadingView.style.display = 'block';
+      // Verify the code is still valid
+      verifyPasswordResetCode(auth, oobCode)
+        .then(function() {
+          loadingView.style.display = 'none';
+          resetView.style.display   = 'block';
+          document.getElementById('newPassword').focus();
+        })
+        .catch(function() {
+          loadingView.style.display = 'none';
+          errorView.style.display   = 'block';
+        });
+    }
+
+    submitBtn.addEventListener('click', function() {
+      var pw1 = document.getElementById('newPassword').value;
+      var pw2 = document.getElementById('confirmPassword').value;
+
+      if (pw1.length < 8) {
+        showMessage('Password must be at least 8 characters.', 'error');
+        return;
+      }
+      if (pw1 !== pw2) {
+        showMessage('Passwords do not match.', 'error');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Updating\u2026';
+
+      confirmPasswordReset(auth, oobCode, pw1)
+        .then(function() {
+          resetView.style.display   = 'none';
+          successView.style.display = 'block';
+        })
+        .catch(function(err) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Set New Password';
+          showMessage('Something went wrong. Please request a new reset link.', 'error');
+        });
+    });
+
+    // Allow Enter key on confirm field
+    document.getElementById('confirmPassword').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') submitBtn.click();
+    });
+  </script>
+</body>
+</html>
