@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery — Crawley Croquet Club</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+    :root {
+      --green-deep:  #1a3a2a;
+      --green-mid:   #2d6a4f;
+      --green-light: #52b788;
+      --cream:       #f7f3ea;
+      --cream-dark:  #ede8d8;
+      --gold:        #c9a84c;
+      --gold-light:  #e8cb7a;
+      --white:       #ffffff;
+      --text-dark:   #1c1c1c;
+      --text-mid:    #3d4a3a;
+      --serif:       'Libre Baskerville', Georgia, serif;
+      --sans:        'Lato', 'Helvetica Neue', Arial, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--sans); background: var(--cream); color: var(--text-dark); }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(248,246,240,0.98);
+      border-bottom: 1px solid rgba(26,58,42,0.12);
+      padding: 0 4rem; height: 80px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-home { font-family: var(--serif); color: var(--green-deep); text-decoration: none; font-size: 1rem; }
+    .nav-home:hover { color: var(--green-mid); }
+    .nav-admin-btn {
+      font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase;
+      font-weight: 700; padding: 0.45rem 1.1rem; border-radius: 2px;
+      cursor: pointer; border: 1.5px solid var(--green-mid);
+      color: var(--green-mid); background: none; transition: all 0.2s;
+    }
+    .nav-admin-btn:hover, .nav-admin-btn.active { background: var(--green-deep); color: var(--cream); border-color: var(--green-deep); }
+
+    /* PAGE HEADER */
+    .page-header {
+      background: var(--green-deep);
+      padding: 8rem 4rem 3.5rem;
+    }
+    .page-header .label {
+      font-size: 0.82rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--green-light); font-weight: 700; margin-bottom: 0.8rem;
+    }
+    .page-header h1 {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--cream); line-height: 1.1;
+    }
+    .page-header h1 em { font-style: italic; color: var(--gold-light); }
+
+    /* ADMIN UPLOAD PANEL */
+    .upload-panel {
+      display: none;
+      background: var(--white);
+      border-bottom: 1px solid var(--cream-dark);
+      padding: 2rem 4rem;
+    }
+    .upload-panel.visible { display: block; }
+    .upload-panel h3 {
+      font-family: var(--serif); font-size: 1.2rem;
+      color: var(--green-deep); margin-bottom: 1rem;
+    }
+    .upload-area {
+      border: 2px dashed var(--green-light);
+      border-radius: 4px;
+      padding: 2.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s;
+      background: var(--cream);
+    }
+    .upload-area:hover { background: var(--cream-dark); }
+    .upload-area p { color: var(--text-mid); font-size: 0.95rem; font-weight: 300; }
+    .upload-area strong { color: var(--green-deep); }
+    #fileInput { display: none; }
+    .upload-progress {
+      margin-top: 1rem;
+      display: none;
+    }
+    .progress-bar-wrap {
+      background: var(--cream-dark); border-radius: 2px;
+      height: 6px; overflow: hidden; margin-bottom: 0.5rem;
+    }
+    .progress-bar {
+      height: 100%; background: var(--green-light);
+      width: 0%; transition: width 0.3s;
+    }
+    .upload-status { font-size: 0.88rem; color: var(--text-mid); font-weight: 300; }
+
+    /* GALLERY GRID */
+    .gallery-wrap { padding: 3rem 4rem 5rem; max-width: 1200px; margin: 0 auto; }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.2rem;
+    }
+    .gallery-item {
+      position: relative; overflow: hidden;
+      border-radius: 2px; background: var(--cream-dark);
+      aspect-ratio: 4/3;
+    }
+    .gallery-item img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transition: transform 0.4s ease;
+    }
+    .gallery-item:hover img { transform: scale(1.04); }
+    .gallery-item .delete-btn {
+      position: absolute; top: 0.5rem; right: 0.5rem;
+      background: rgba(212,0,0,0.85); color: white;
+      border: none; border-radius: 2px; padding: 0.3rem 0.6rem;
+      font-size: 0.75rem; font-weight: 700; cursor: pointer;
+      display: none; letter-spacing: 0.05em; text-transform: uppercase;
+      transition: background 0.2s;
+    }
+    .gallery-item .delete-btn:hover { background: #a00000; }
+    body.admin-mode .gallery-item .delete-btn { display: block; }
+    .gallery-item .caption-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(26,58,42,0.75));
+      padding: 1.5rem 0.8rem 0.6rem;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .gallery-item:hover .caption-overlay { opacity: 1; }
+    .gallery-item .caption-text {
+      color: var(--cream); font-size: 0.82rem; font-weight: 300;
+    }
+
+    /* EMPTY STATE */
+    .gallery-empty {
+      text-align: center; padding: 4rem 2rem;
+      display: none;
+    }
+    .gallery-empty.visible { display: block; }
+    .gallery-empty p {
+      font-family: var(--serif); font-size: 1.3rem;
+      color: var(--text-mid); margin-bottom: 0.6rem;
+    }
+    .gallery-empty span {
+      font-size: 0.95rem; color: #aaa; font-weight: 300;
+    }
+
+    /* LOADING */
+    .gallery-loading {
+      text-align: center; padding: 4rem;
+      color: var(--text-mid); font-size: 0.95rem; font-weight: 300;
+    }
+
+    /* LIGHTBOX */
+    .lightbox {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(15,36,24,0.95);
+      align-items: center; justify-content: center;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img {
+      max-width: 90vw; max-height: 88vh;
+      object-fit: contain; border-radius: 2px;
+    }
+    .lightbox-close {
+      position: absolute; top: 1.5rem; right: 2rem;
+      color: var(--cream); font-size: 2rem; cursor: pointer;
+      background: none; border: none; line-height: 1;
+      opacity: 0.7; transition: opacity 0.2s;
+    }
+    .lightbox-close:hover { opacity: 1; }
+    .lightbox-prev, .lightbox-next {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(247,243,234,0.15); border: none;
+      color: var(--cream); font-size: 2rem; cursor: pointer;
+      padding: 0.8rem 1.2rem; border-radius: 2px;
+      transition: background 0.2s; line-height: 1;
+    }
+    .lightbox-prev { left: 1.5rem; }
+    .lightbox-next { right: 1.5rem; }
+    .lightbox-prev:hover, .lightbox-next:hover { background: rgba(247,243,234,0.3); }
+    .lightbox-caption {
+      position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+      color: rgba(247,243,234,0.7); font-size: 0.9rem; font-weight: 300;
+    }
+
+    /* LOGIN MODAL */
+    .modal-backdrop {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(26,58,42,0.6); align-items: center; justify-content: center;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--white); padding: 2.5rem; width: 90%; max-width: 380px;
+      border-top: 4px solid var(--green-mid);
+    }
+    .modal h3 { font-family: var(--serif); font-size: 1.4rem; color: var(--green-deep); margin-bottom: 1.2rem; }
+    .modal label { display: block; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-mid); margin-bottom: 0.3rem; margin-top: 1rem; }
+    .modal input { width: 100%; padding: 0.65rem 0.8rem; border: 1px solid var(--cream-dark); font-family: var(--sans); font-size: 0.95rem; color: var(--text-dark); background: var(--cream); outline: none; transition: border-color 0.2s; }
+    .modal input:focus { border-color: var(--green-mid); }
+    .modal-actions { display: flex; gap: 0.8rem; margin-top: 1.5rem; justify-content: flex-end; }
+    .btn { display: inline-block; text-decoration: none; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.75rem 1.5rem; border-radius: 2px; transition: all 0.2s; cursor: pointer; border: none; }
+    .btn-primary { background: var(--green-deep); color: var(--cream); }
+    .btn-primary:hover { background: var(--green-mid); }
+    .btn-outline { border: 1.5px solid var(--cream-dark); color: var(--text-mid); background: none; }
+    .btn-outline:hover { border-color: var(--green-mid); color: var(--green-mid); }
+    .error-msg { font-size: 0.82rem; color: #d40000; margin-top: 0.5rem; display: none; }
+
+    /* FOOTER */
+    footer {
+      background: #0f2418; padding: 2rem 4rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid rgba(201,168,76,0.2); flex-wrap: wrap; gap: 1rem;
+    }
+    footer p { color: rgba(247,243,234,0.35); font-size: 0.88rem; font-weight: 300; }
+    footer a { color: rgba(247,243,234,0.5); text-decoration: none; }
+    footer a:hover { color: var(--gold); }
+
+    @media (max-width: 700px) {
+      nav { padding: 0 1.5rem; }
+      .page-header { padding: 7rem 1.5rem 2.5rem; }
+      .gallery-wrap { padding: 2rem 1.5rem 4rem; }
+      .upload-panel { padding: 1.5rem; }
+      .lightbox-prev { left: 0.5rem; }
+      .lightbox-next { right: 0.5rem; }
+      footer { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-home" href="index.html">&larr; Crawley Croquet Club</a>
+  <button class="nav-admin-btn" id="adminBtn">Admin Login</button>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="label">Club Life</div>
+  <h1>Photo <em>Gallery</em></h1>
+</div>
+
+<!-- ADMIN UPLOAD PANEL -->
+<div class="upload-panel" id="uploadPanel">
+  <h3>Upload Photos</h3>
+  <div class="upload-area" id="uploadArea">
+    <p><strong>Click to select photos</strong> or drag and drop here</p>
+    <p style="margin-top:0.4rem;font-size:0.85rem;">JPG, PNG or WEBP &middot; Maximum 10MB per photo</p>
+    <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple />
+  </div>
+  <div class="upload-progress" id="uploadProgress">
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="upload-status" id="uploadStatus">Uploading&hellip;</div>
+  </div>
+</div>
+
+<!-- GALLERY -->
+<div class="gallery-wrap">
+  <div class="gallery-loading" id="galleryLoading">Loading photos&hellip;</div>
+  <div class="gallery-empty" id="galleryEmpty">
+    <p>No photos yet</p>
+    <span>Check back soon &mdash; photos from our events will appear here.</span>
+  </div>
+  <div class="gallery-grid" id="galleryGrid"></div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose">&times;</button>
+  <button class="lightbox-prev" id="lightboxPrev">&#8249;</button>
+  <img id="lightboxImg" src="" alt="" />
+  <button class="lightbox-next" id="lightboxNext">&#8250;</button>
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-backdrop" id="loginModal">
+  <div class="modal">
+    <h3>Admin Login</h3>
+    <label>Email</label>
+    <input type="email" id="adminEmail" placeholder="your@email.com" autocomplete="email" />
+    <label>Password</label>
+    <input type="password" id="adminPassword" placeholder="Password" autocomplete="current-password" />
+    <p class="error-msg" id="loginError">Incorrect email or password.</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="loginCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="loginSubmitBtn">Log In</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2025 Crawley Croquet Club</p>
+  <p>Worth Park, Crawley, West Sussex</p>
+  <p><a href="index.html">Back to main site</a> &middot; <a href="policies.html">Privacy &amp; Safeguarding</a></p>
+</footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getStorage, ref, uploadBytesResumable, getDownloadURL, listAll, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCNF0Frimcii1tdnP9bQRodKUcI8uLJst0",
+    authDomain: "crawley-croquet-club.firebaseapp.com",
+    projectId: "crawley-croquet-club",
+    storageBucket: "crawley-croquet-club.firebasestorage.app",
+    messagingSenderId: "460114961964",
+    appId: "1:460114961964:web:48df356888cd2d058d1389"
+  };
+
+  const app     = initializeApp(firebaseConfig);
+  const auth    = getAuth(app);
+  const storage = getStorage(app);
+
+  // ── AUTH STATE ──
+  onAuthStateChanged(auth, function(user) {
+    var isAdmin = !!user;
+    document.body.classList.toggle('admin-mode', isAdmin);
+    var adminBtn = document.getElementById('adminBtn');
+    adminBtn.textContent = isAdmin ? 'Log Out' : 'Admin Login';
+    adminBtn.classList.toggle('active', isAdmin);
+    document.getElementById('uploadPanel').classList.toggle('visible', isAdmin);
+  });
+
+  // ── ADMIN BUTTON ──
+  document.getElementById('adminBtn').addEventListener('click', function() {
+    if (document.body.classList.contains('admin-mode')) {
+      signOut(auth);
+    } else {
+      document.getElementById('loginModal').classList.add('open');
+      document.getElementById('adminEmail').value = '';
+      document.getElementById('adminPassword').value = '';
+      document.getElementById('loginError').style.display = 'none';
+      setTimeout(function() { document.getElementById('adminEmail').focus(); }, 100);
+    }
+  });
+
+  // ── LOGIN ──
+  document.getElementById('loginCancelBtn').addEventListener('click', function() {
+    document.getElementById('loginModal').classList.remove('open');
+  });
+
+  function doLogin() {
+    var email = document.getElementById('adminEmail').value.trim();
+    var pw    = document.getElementById('adminPassword').value;
+    document.getElementById('loginError').style.display = 'none';
+    signInWithEmailAndPassword(auth, email, pw)
+      .then(function() { document.getElementById('loginModal').classList.remove('open'); })
+      .catch(function() {
+        document.getElementById('loginError').style.display = 'block';
+        document.getElementById('adminPassword').value = '';
+        document.getElementById('adminPassword').focus();
+      });
+  }
+
+  document.getElementById('loginSubmitBtn').addEventListener('click', doLogin);
+  document.getElementById('adminPassword').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doLogin();
+  });
+  document.getElementById('loginModal').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+
+  // ── LOAD GALLERY ──
+  var galleryItems = []; // { url, name }
+  var lightboxIndex = 0;
+
+  function loadGallery() {
+    var galleryRef = ref(storage, 'gallery');
+    listAll(galleryRef).then(function(result) {
+      document.getElementById('galleryLoading').style.display = 'none';
+      if (result.items.length === 0) {
+        document.getElementById('galleryEmpty').classList.add('visible');
+        return;
+      }
+      galleryItems = [];
+      var grid = document.getElementById('galleryGrid');
+      grid.innerHTML = '';
+      var promises = result.items.map(function(itemRef) {
+        return getDownloadURL(itemRef).then(function(url) {
+          return { url: url, name: itemRef.name, ref: itemRef };
+        });
+      });
+      Promise.all(promises).then(function(items) {
+        // Sort by name (newest uploads last — filename includes timestamp)
+        items.sort(function(a, b) { return b.name.localeCompare(a.name); });
+        items.forEach(function(item, index) {
+          galleryItems.push(item);
+          var div = document.createElement('div');
+          div.className = 'gallery-item';
+          var img = document.createElement('img');
+          img.src = item.url;
+          img.alt = 'Club photo';
+          img.loading = 'lazy';
+          img.addEventListener('click', function() { openLightbox(index); });
+          var deleteBtn = document.createElement('button');
+          deleteBtn.className = 'delete-btn';
+          deleteBtn.textContent = 'Delete';
+          deleteBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (confirm('Delete this photo? This cannot be undone.')) {
+              deleteObject(item.ref).then(function() { loadGallery(); });
+            }
+          });
+          var overlay = document.createElement('div');
+          overlay.className = 'caption-overlay';
+          var caption = document.createElement('div');
+          caption.className = 'caption-text';
+          caption.textContent = item.name.replace(/^\d+_/, '').replace(/\.[^.]+$/, '').replace(/_/g, ' ');
+          overlay.appendChild(caption);
+          div.appendChild(img);
+          div.appendChild(deleteBtn);
+          div.appendChild(overlay);
+          grid.appendChild(div);
+        });
+      });
+    }).catch(function() {
+      document.getElementById('galleryLoading').style.display = 'none';
+      document.getElementById('galleryEmpty').classList.add('visible');
+    });
+  }
+  loadGallery();
+
+  // ── LIGHTBOX ──
+  function openLightbox(index) {
+    lightboxIndex = index;
+    var item = galleryItems[index];
+    document.getElementById('lightboxImg').src = item.url;
+    document.getElementById('lightboxCaption').textContent =
+      item.name.replace(/^\d+_/, '').replace(/\.[^.]+$/, '').replace(/_/g, ' ');
+    document.getElementById('lightbox').classList.add('open');
+  }
+
+  document.getElementById('lightboxClose').addEventListener('click', function() {
+    document.getElementById('lightbox').classList.remove('open');
+  });
+  document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+  document.getElementById('lightboxPrev').addEventListener('click', function() {
+    lightboxIndex = (lightboxIndex - 1 + galleryItems.length) % galleryItems.length;
+    openLightbox(lightboxIndex);
+  });
+  document.getElementById('lightboxNext').addEventListener('click', function() {
+    lightboxIndex = (lightboxIndex + 1) % galleryItems.length;
+    openLightbox(lightboxIndex);
+  });
+  document.addEventListener('keydown', function(e) {
+    if (!document.getElementById('lightbox').classList.contains('open')) return;
+    if (e.key === 'ArrowLeft') document.getElementById('lightboxPrev').click();
+    if (e.key === 'ArrowRight') document.getElementById('lightboxNext').click();
+    if (e.key === 'Escape') document.getElementById('lightboxClose').click();
+  });
+
+  // ── UPLOAD ──
+  var uploadArea  = document.getElementById('uploadArea');
+  var fileInput   = document.getElementById('fileInput');
+  var uploadProgress = document.getElementById('uploadProgress');
+  var progressBar = document.getElementById('progressBar');
+  var uploadStatus = document.getElementById('uploadStatus');
+
+  uploadArea.addEventListener('click', function() { fileInput.click(); });
+
+  uploadArea.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    uploadArea.style.background = 'var(--cream-dark)';
+  });
+  uploadArea.addEventListener('dragleave', function() {
+    uploadArea.style.background = 'var(--cream)';
+  });
+  uploadArea.addEventListener('drop', function(e) {
+    e.preventDefault();
+    uploadArea.style.background = 'var(--cream)';
+    handleFiles(e.dataTransfer.files);
+  });
+
+  fileInput.addEventListener('change', function() {
+    handleFiles(fileInput.files);
+  });
+
+  function handleFiles(files) {
+    var fileArray = Array.from(files);
+    if (fileArray.length === 0) return;
+
+    // Validate
+    var invalid = fileArray.filter(function(f) {
+      return f.size > 10 * 1024 * 1024 || !f.type.startsWith('image/');
+    });
+    if (invalid.length > 0) {
+      alert('Some files were skipped — please use JPG, PNG or WEBP images under 10MB.');
+      fileArray = fileArray.filter(function(f) {
+        return f.size <= 10 * 1024 * 1024 && f.type.startsWith('image/');
+      });
+    }
+    if (fileArray.length === 0) return;
+
+    uploadProgress.style.display = 'block';
+    var completed = 0;
+    var total = fileArray.length;
+
+    fileArray.forEach(function(file) {
+      var timestamp = Date.now();
+      var safeName  = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      var fileName  = timestamp + '_' + safeName;
+      var fileRef   = ref(storage, 'gallery/' + fileName);
+      var uploadTask = uploadBytesResumable(fileRef, file);
+
+      uploadTask.on('state_changed',
+        function(snapshot) {
+          var pct = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          progressBar.style.width = pct + '%';
+          uploadStatus.textContent = 'Uploading ' + (completed + 1) + ' of ' + total + '\u2026';
+        },
+        function(error) {
+          uploadStatus.textContent = 'Upload failed \u2014 please try again.';
+        },
+        function() {
+          completed++;
+          if (completed === total) {
+            uploadStatus.textContent = total + ' photo' + (total > 1 ? 's' : '') + ' uploaded successfully.';
+            progressBar.style.width = '100%';
+            setTimeout(function() {
+              uploadProgress.style.display = 'none';
+              progressBar.style.width = '0%';
+              fileInput.value = '';
+              document.getElementById('galleryEmpty').classList.remove('visible');
+              loadGallery();
+            }, 1500);
+          }
+        }
+      );
+    });
+  }
+</script>
+</body>
+</html>
