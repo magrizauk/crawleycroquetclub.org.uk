@@ -227,6 +227,10 @@
     .why-inner { max-width: 1100px; margin: 0 auto; }
     .why-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3rem; }
     .why-card { background: var(--white); padding: 2.5rem 2rem; border-top: 3px solid var(--green-light); transition: transform 0.25s, box-shadow 0.25s; }
+    .why-card.why-card-events { border-top-color: var(--gold); }
+    .why-card.why-card-events h3 { color: var(--green-deep); }
+    .why-card.why-card-events a { display: inline-block; margin-top: 1rem; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); text-decoration: none; transition: color 0.2s; }
+    .why-card.why-card-events a:hover { color: var(--green-mid); }
     .why-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(26,58,42,0.1); }
     .why-card h3 {
       font-family: var(--serif);
@@ -1014,6 +1018,11 @@
       <div class="why-card reveal">
         <h3>Free First Visit</h3>
         <p>Not sure if it&rsquo;s for you? Come along for a free introductory lesson and your first three games on us &mdash; no experience, equipment, or special clothing needed. There&rsquo;s absolutely no obligation, just a warm welcome.</p>
+      </div>
+      <div class="why-card why-card-events reveal">
+        <h3>Bring Your Group</h3>
+        <p>Looking for a team day, summer party, or social occasion with a difference? Our lawns at Worth Park offer a unique and memorable setting for private events of all kinds &mdash; corporate groups, clubs, and social gatherings all welcome.</p>
+        <a href="private-events.html">Find out more &rarr;</a>
       </div>
     </div>
   </div>
