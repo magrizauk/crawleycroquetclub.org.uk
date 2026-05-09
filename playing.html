@@ -45,6 +45,41 @@
       text-decoration: none; white-space: nowrap;
     }
     .nav-cta-sub:hover { background: var(--green-mid) !important; color: var(--cream) !important; }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 3rem; min-height: 80px; height: 80px;
+      background: rgba(248,246,240,0.98);
+      border-bottom: 1px solid rgba(26,58,42,0.12);
+    }
+    .nav-logo-wrap { display: flex; align-items: center; text-decoration: none; height: 48px; overflow: hidden; }
+    .nav-logo-img { height: 32px; width: auto; display: block; }
+    .nav-links-sub { display: flex; gap: 2rem; list-style: none; align-items: center; }
+    .nav-links-sub a {
+      color: var(--green-deep); text-decoration: none; font-size: 1rem;
+      letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700;
+      transition: color 0.2s;
+    }
+    .nav-links-sub a:not(.nav-cta-sub) {
+      padding-bottom: 3px;
+      box-shadow: inset 0 -2px 0 transparent;
+      transition: color 0.2s, box-shadow 0.2s;
+    }
+    .nav-links-sub a:not(.nav-cta-sub):hover {
+      color: var(--green-mid);
+      box-shadow: inset 0 -2px 0 var(--green-deep);
+    }
+    .nav-cta-sub {
+      background: var(--green-deep); color: var(--cream) !important;
+      padding: 0.5rem 1.3rem; border-radius: 2px; font-size: 1rem;
+      text-decoration: none; white-space: nowrap;
+    }
+    .nav-cta-sub:hover { background: var(--green-mid) !important; color: var(--cream) !important; }
+    @media (max-width: 700px) {
+      nav { padding: 0 1.5rem; }
+      .nav-links-sub { gap: 1rem; }
+      .nav-links-sub a:not(.nav-cta-sub) { display: none; }
+    }
     .page-header{background:var(--green-deep);padding:8rem 4rem 3.5rem;}
     .page-header .label{font-size:0.82rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--green-light);font-weight:700;margin-bottom:0.8rem;}
     .page-header h1{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);color:var(--cream);line-height:1.1;}
@@ -66,17 +101,25 @@
     .content-body a{color:var(--green-mid);}
     .btn-primary{display:inline-block;margin-top:2rem;background:var(--green-deep);color:var(--cream);padding:0.85rem 2rem;font-size:0.88rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border-radius:2px;transition:background 0.2s;}
     .btn-primary:hover{background:var(--green-mid);}
-    footer{background:#0f2418;padding:2rem 4rem;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(201,168,76,0.2);flex-wrap:wrap;gap:1rem;}
-    footer p{color:rgba(247,243,234,0.35);font-size:0.88rem;font-weight:300;}
-    footer a{color:rgba(247,243,234,0.5);text-decoration:none;}
-    footer a:hover{color:var(--gold);}
+    footer {
+      background: #0f2418; padding: 2rem 4rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid rgba(201,168,76,0.2); gap: 2rem; flex-wrap: wrap;
+    }
+    footer p { color: rgba(247,243,234,0.35); font-size: 0.9rem; font-weight: 300; }
+    footer a { color: rgba(247,243,234,0.5); text-decoration: none; }
+    footer a:hover { color: rgba(201,168,76,1); }
+    .footer-logo-img { height: 22px; width: auto; display: block; opacity: 0.75; filter: invert(1); }
+    @media (max-width: 700px) {
+      footer { flex-direction: column; gap: 0.8rem; text-align: center; padding: 2rem 1.5rem; }
+    }
     @media(max-width:700px){nav{padding:0 1.5rem;}.nav-links{display:none;}.page-header{padding:7rem 1.5rem 2.5rem;}.content-section{padding:4rem 1.5rem;}footer{flex-direction:column;text-align:center;padding:2rem 1.5rem;}}
   </style>
 </head>
 <body>
 <nav>
-  <a class="nav-logo-wrap" href="index.html">
-    <img src="images/Line_CCC.svg" alt="Crawley Croquet Club" class="nav-logo" />
+  <a class="nav-logo-wrap" href="#" onclick="history.length > 1 ? history.back() : window.location='index.html'; return false;">
+    <img src="images/Line_CCC.svg" alt="Crawley Croquet Club" class="nav-logo-img" />
   </a>
   <ul class="nav-links-sub">
     <li><a href="#coaching">Coaching</a></li>
@@ -150,16 +193,14 @@
   </div>
 </section>
 <footer>
-  <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
-    <img src="images/Line_CCC.svg" alt="Crawley Croquet Club" style="height:20px;width:auto;opacity:0.5;filter:invert(1);" />
-    <p style="color:rgba(247,243,234,0.35);font-size:0.88rem;font-weight:300;">&copy; <span class="yr-span">2025</span> Crawley Croquet Club &middot; Worth Park, Crawley, West Sussex</p>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <img src="images/Line_CCC.svg" alt="Crawley Croquet Club" class="footer-logo-img" />
   </div>
-  <p style="color:rgba(247,243,234,0.35);font-size:0.88rem;font-weight:300;">
-    <a href="#" onclick="history.length > 1 ? history.back() : window.location='index.html'; return false;" style="color:rgba(247,243,234,0.5);text-decoration:none;">Main site</a>
-    &middot;
-    <a href="policies.html" style="color:rgba(247,243,234,0.5);text-decoration:none;">Privacy &amp; Safeguarding</a>
-  </p>
+  <div>
+    <p>Worth Park, Crawley &middot; Season: mid-April to end of September</p>
+    <p style="margin-top:0.4rem;">&copy; <span class="ccc-year">2025</span> Crawley Croquet Club &middot; <a href="index.html">Main site</a> &middot; <a href="gallery.html">Gallery</a> &middot; <a href="policies.html">Privacy &amp; Safeguarding</a> &middot; <a href="private-events.html">Private Events</a></p>
+  </div>
 </footer>
-<script>document.querySelectorAll('.yr-span').forEach(function(el){el.textContent=new Date().getFullYear();});</script>
+<script>document.querySelectorAll('.ccc-year').forEach(function(el){el.textContent=new Date().getFullYear();});</script>
 </body>
 </html>

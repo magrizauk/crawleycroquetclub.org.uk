@@ -73,17 +73,25 @@
     .card p{font-size:0.92rem;line-height:1.75;color:var(--text-mid);font-weight:300;}
     .btn-primary{display:inline-block;margin-top:2rem;background:var(--green-deep);color:var(--cream);padding:0.85rem 2rem;font-size:0.88rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border-radius:2px;transition:background 0.2s;}
     .btn-primary:hover{background:var(--green-mid);}
-    footer{background:#0f2418;padding:2rem 4rem;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(201,168,76,0.2);flex-wrap:wrap;gap:1rem;}
-    footer p{color:rgba(247,243,234,0.35);font-size:0.88rem;font-weight:300;}
-    footer a{color:rgba(247,243,234,0.5);text-decoration:none;}
-    footer a:hover{color:var(--gold);}
+    footer {
+      background: #0f2418; padding: 2rem 4rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid rgba(201,168,76,0.2); gap: 2rem; flex-wrap: wrap;
+    }
+    footer p { color: rgba(247,243,234,0.35); font-size: 0.9rem; font-weight: 300; }
+    footer a { color: rgba(247,243,234,0.5); text-decoration: none; }
+    footer a:hover { color: rgba(201,168,76,1); }
+    .footer-logo-img { height: 22px; width: auto; display: block; opacity: 0.75; filter: invert(1); }
+    @media (max-width: 700px) {
+      footer { flex-direction: column; gap: 0.8rem; text-align: center; padding: 2rem 1.5rem; }
+    }
     @media(max-width:700px){nav{padding:0 1.5rem;}.page-header{padding:7rem 1.5rem 2.5rem;}.content{padding:3rem 1.5rem 4rem;}footer{flex-direction:column;text-align:center;padding:2rem 1.5rem;}}
   </style>
 </head>
 <body>
 <nav>
   <a class="nav-logo-wrap" href="index.html">
-    <img src="images/Line_CCC.svg" alt="Crawley Croquet Club" class="nav-logo" />
+    <img src="images/Line_CCC.svg" alt="Crawley Croquet Club" class="nav-logo-img" />
   </a>
   <ul class="nav-links-sub">
     <li><a href="index.html#contact-form" class="nav-cta-sub">Get In Touch</a></li>
@@ -132,16 +140,14 @@
     <a href="index.html#contact-form" class="btn-primary">Enquire About a Private Event</a>
 </div>
 <footer>
-  <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
-    <img src="images/Line_CCC.svg" alt="Crawley Croquet Club" style="height:20px;width:auto;opacity:0.5;filter:invert(1);" />
-    <p style="color:rgba(247,243,234,0.35);font-size:0.88rem;font-weight:300;">&copy; <span class="yr-span">2025</span> Crawley Croquet Club &middot; Worth Park, Crawley, West Sussex</p>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <img src="images/Line_CCC.svg" alt="Crawley Croquet Club" class="footer-logo-img" />
   </div>
-  <p style="color:rgba(247,243,234,0.35);font-size:0.88rem;font-weight:300;">
-    <a href="#" onclick="history.length > 1 ? history.back() : window.location='index.html'; return false;" style="color:rgba(247,243,234,0.5);text-decoration:none;">Main site</a>
-    &middot;
-    <a href="policies.html" style="color:rgba(247,243,234,0.5);text-decoration:none;">Privacy &amp; Safeguarding</a>
-  </p>
+  <div>
+    <p>Worth Park, Crawley &middot; Season: mid-April to end of September</p>
+    <p style="margin-top:0.4rem;">&copy; <span class="ccc-year">2025</span> Crawley Croquet Club &middot; <a href="index.html">Main site</a> &middot; <a href="gallery.html">Gallery</a> &middot; <a href="playing.html">Coaching &amp; Etiquette</a> &middot; <a href="policies.html">Privacy &amp; Safeguarding</a></p>
+  </div>
 </footer>
-<script>document.querySelectorAll('.yr-span').forEach(function(el){el.textContent=new Date().getFullYear();});</script>
+<script>document.querySelectorAll('.ccc-year').forEach(function(el){el.textContent=new Date().getFullYear();});</script>
 </body>
 </html>

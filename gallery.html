@@ -32,6 +32,7 @@
     body { font-family: var(--sans); background: var(--cream); color: var(--text-dark); }
 
     /* NAV */
+    .nav-logo-img { height: 32px; width: auto; display: block; }
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       background: rgba(248,246,240,0.98);
@@ -210,13 +211,22 @@
     .error-msg { font-size: 0.82rem; color: #d40000; margin-top: 0.5rem; display: none; }
 
     /* FOOTER */
-    footer { background: #0f2418; padding: 2rem 4rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(201,168,76,0.2); flex-wrap: wrap; gap: 1rem; }
-    footer p { color: rgba(247,243,234,0.35); font-size: 0.88rem; font-weight: 300; }
+    footer {
+      background: #0f2418; padding: 2rem 4rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid rgba(201,168,76,0.2); gap: 2rem; flex-wrap: wrap;
+    }
+    footer p { color: rgba(247,243,234,0.35); font-size: 0.9rem; font-weight: 300; }
     footer a { color: rgba(247,243,234,0.5); text-decoration: none; }
-    footer a:hover { color: var(--gold); }
+    footer a:hover { color: rgba(201,168,76,1); }
+    .footer-logo-img { height: 22px; width: auto; display: block; opacity: 0.75; filter: invert(1); }
+    @media (max-width: 700px) {
+      footer { flex-direction: column; gap: 0.8rem; text-align: center; padding: 2rem 1.5rem; }
+    }
 
     @media (max-width: 700px) {
-      nav { padding: 0 1.5rem; }
+      .nav-logo-img { height: 32px; width: auto; display: block; }
+    nav { padding: 0 1.5rem; }
       .page-header { padding: 7rem 1.5rem 2.5rem; }
       .gallery-wrap { padding: 2rem 1.5rem 4rem; }
       .upload-panel { padding: 1.5rem; }
@@ -232,7 +242,7 @@
 <!-- NAV -->
 <nav>
   <a class="nav-logo-wrap" href="index.html" style="display:flex;align-items:center;text-decoration:none;">
-    <img src="images/Line_CCC.svg" alt="Crawley Croquet Club" style="height:28px;width:auto;display:block;" />
+    <img src="images/Line_CCC.svg" alt="Crawley Croquet Club" class="nav-logo-img" />
   </a>
   <div class="nav-right">
     <a class="nav-back-gallery" id="navBackGallery" href="#">&larr; All Collections</a>
@@ -316,17 +326,15 @@
 
 <!-- FOOTER -->
 <footer>
-  <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
-    <img src="images/Line_CCC.svg" alt="Crawley Croquet Club" style="height:20px;width:auto;opacity:0.5;filter:invert(1);" />
-    <p style="color:rgba(247,243,234,0.35);font-size:0.88rem;font-weight:300;">&copy; <span class="yr-span">2025</span> Crawley Croquet Club &middot; Worth Park, Crawley, West Sussex</p>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <img src="images/Line_CCC.svg" alt="Crawley Croquet Club" class="footer-logo-img" />
   </div>
-  <p style="color:rgba(247,243,234,0.35);font-size:0.88rem;font-weight:300;">
-    <a href="#" onclick="history.length > 1 ? history.back() : window.location='index.html'; return false;" style="color:rgba(247,243,234,0.5);text-decoration:none;">Main site</a>
-    &middot;
-    <a href="policies.html" style="color:rgba(247,243,234,0.5);text-decoration:none;">Privacy &amp; Safeguarding</a>
-  </p>
+  <div>
+    <p>Worth Park, Crawley &middot; Season: mid-April to end of September</p>
+    <p style="margin-top:0.4rem;">&copy; <span class="ccc-year">2025</span> Crawley Croquet Club &middot; <a href="index.html">Main site</a> &middot; <a href="playing.html">Coaching &amp; Etiquette</a> &middot; <a href="policies.html">Privacy &amp; Safeguarding</a> &middot; <a href="private-events.html">Private Events</a></p>
+  </div>
 </footer>
-<script>document.querySelectorAll('.yr-span').forEach(function(el){el.textContent=new Date().getFullYear();});</script>
+<script>document.querySelectorAll('.ccc-year').forEach(function(el){el.textContent=new Date().getFullYear();});</script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
