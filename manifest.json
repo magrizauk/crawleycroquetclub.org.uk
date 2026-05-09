@@ -2,12 +2,12 @@
   "name": "Crawley Croquet Club",
   "short_name": "CCC",
   "description": "Crawley Croquet Club — Worth Park, Crawley. Club calendar, events, and information.",
-  "start_url": "/crawleycroquetclub.org.uk/",
+  "start_url": "https://magrizauk.github.io/crawleycroquetclub.org.uk/",
   "display": "standalone",
   "background_color": "#1a3a2a",
   "theme_color": "#1a3a2a",
   "orientation": "portrait-primary",
-  "scope": "/",
+  "scope": "https://magrizauk.github.io/crawleycroquetclub.org.uk/",
   "lang": "en-GB",
   "categories": ["sports", "lifestyle"],
   "icons": [
@@ -41,7 +41,7 @@
       "name": "Club Calendar",
       "short_name": "Calendar",
       "description": "View the club calendar",
-      "url": "/crawleycroquetclub.org.uk/#calendar",
+      "url": "https://magrizauk.github.io/crawleycroquetclub.org.uk/#calendar",
       "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
