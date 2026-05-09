@@ -246,7 +246,7 @@
       min-height: 100vh;
       background:
         linear-gradient(to right, rgba(15,36,24,0.82) 0%, rgba(15,36,24,0.55) 60%, rgba(15,36,24,0.25) 100%),
-        url('https://images.unsplash.com/photo-1606253361120-11faf0f78576?q=80&w=2670&auto=format&fit=crop') center/cover no-repeat;
+        url('images/hero-bg.jpg') center/cover no-repeat;
       display: flex; align-items: center;
       padding: 0 4rem;
     }
@@ -434,6 +434,8 @@
     .modal {
       background: var(--white); padding: 2.5rem; width: 90%; max-width: 440px;
       border-top: 4px solid var(--green-mid);
+      max-height: 90vh; overflow-y: auto;
+      position: relative; margin: auto;
     }
     .modal h3 { font-family: var(--serif); font-size: 1.6rem; color: var(--green-deep); margin-bottom: 1.5rem; }
     .modal label { display: block; font-size: 0.88rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-mid); margin-bottom: 0.3rem; margin-top: 1rem; }
@@ -1466,6 +1468,7 @@
 <!-- EVENT VIEW MODAL (non-admin) -->
 <div class="modal-backdrop" id="viewModal">
   <div class="modal">
+    <div id="viewModalCancelled" style="display:none;background:#d40000;color:white;padding:0.5rem 1rem;margin-bottom:1rem;font-size:0.88rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Event Cancelled &mdash; Removed from Calendar</div>
     <h3 id="viewModalTitle"></h3>
     <div id="viewModalType" class="view-event-type"></div>
     <div id="viewModalDate" class="view-event-date"></div>
@@ -1812,7 +1815,10 @@
       viewMonth = month;
       renderCalendar();
     },
-    open: function(ev) {
+    open: function(ev, action) {
+      // Show cancelled banner if this was a deletion.
+      var banner = document.getElementById('viewModalCancelled');
+      if (banner) banner.style.display = (action === 'deleted') ? 'block' : 'none';
       openViewEvent(ev);
     }
   };
@@ -2013,7 +2019,7 @@
   (function () {
     var lastSeen = null;
 
-    function handleNotification(ev) {
+    function handleNotification(ev, action) {
       if (!ev || !ev.title) return;
 
       // Navigate calendar to the event month/year.
@@ -2031,7 +2037,7 @@
       // Open the view modal.
       setTimeout(function () {
         if (window._calNav && window._calNav.open) {
-          window._calNav.open(ev);
+          window._calNav.open(ev, action);
         }
       }, 800);
     }
@@ -2051,7 +2057,7 @@
         if (lastSeen === null) { lastSeen = data.updatedAt; return; }
         if (data.updatedAt === lastSeen) return;
         lastSeen = data.updatedAt;
-        handleNotification(data);
+        handleNotification(data, data.action);
       });
     }, 200);
   })();
