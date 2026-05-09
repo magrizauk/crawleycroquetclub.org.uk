@@ -25,6 +25,33 @@
 
   <!-- Mobile theme colour -->
   <meta name="theme-color" content="#1a3a2a" />
+  <meta name="theme-color" content="#1a3a2a" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('sw.js')
+            .then(function (reg) {
+              console.log('SW registered:', reg.scope);
+              if (reg.installing) {
+                reg.installing.addEventListener('statechange', function () {
+                  if (this.state === 'activated') {
+                    console.log('SW activated — triggering push subscription');
+                    if (window._pushSubscribe && Notification.permission === 'granted') {
+                      window._pushSubscribe();
+                    }
+                  }
+                });
+              }
+            })
+            .catch(function (err) { console.warn('SW registration failed:', err); });
+        });
+      }
+    </script>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
