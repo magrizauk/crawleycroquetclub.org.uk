@@ -1805,6 +1805,18 @@
   }
   window.renderCalendar = renderCalendar;
 
+  // Expose calendar state and modal opener for the notification tap handler.
+  window._calNav = {
+    go: function(year, month) {
+      viewYear  = year;
+      viewMonth = month;
+      renderCalendar();
+    },
+    open: function(ev) {
+      openViewEvent(ev);
+    }
+  };
+
   document.getElementById('calPrev').addEventListener('click', function() {
     viewMonth--;
     if (viewMonth < 0) { viewMonth = 11; viewYear--; }
@@ -1995,54 +2007,53 @@
   renderCalendar();
 
   // ── Notification tap handler ───────────────────────────────────────────────
-  // Reads event details from URL hash parameters and opens the view modal.
-  // Listens on both 'load' (fresh open) and 'hashchange' (already-open PWA).
-  (function () {
-    function openFromParams() {
-      var hash   = window.location.hash || '';
-      var qIndex = hash.indexOf('?');
-      if (qIndex === -1) return;
-      var search = hash.slice(qIndex);
-      var params = new URLSearchParams(search);
-      if (!params.get('event')) return;
+  // Placed after renderCalendar() so all calendar functions are initialised.
+  // Uses window._calNav to avoid closure scope issues.
+  window._openFromNotification = function () {
+    var href   = window.location.href;
+    var qIndex = href.indexOf('?');
+    if (qIndex === -1) return;
+    var params = new URLSearchParams(href.slice(qIndex));
+    if (!params.get('event')) return;
 
-      var ev = {
-        title: params.get('title') || '',
-        type:  params.get('type')  || 'other',
-        date:  params.get('date')  || '',
-        notes: params.get('notes') || '',
-      };
+    var ev = {
+      title: params.get('title') || '',
+      type:  params.get('type')  || 'other',
+      date:  params.get('date')  || '',
+      notes: params.get('notes') || '',
+    };
 
-      // Navigate the calendar to the event's month/year.
-      if (ev.date) {
-        var parts = ev.date.split('-');
-        if (parts.length === 3) {
-          viewYear  = parseInt(parts[0], 10);
-          viewMonth = parseInt(parts[1], 10) - 1;
-          renderCalendar();
-        }
+    // Navigate to the event month/year via the exposed interface.
+    if (ev.date && window._calNav) {
+      var parts = ev.date.split('-');
+      if (parts.length === 3) {
+        window._calNav.go(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1);
       }
-
-      // Scroll to calendar section.
-      var calSection = document.getElementById('calendar');
-      if (calSection) calSection.scrollIntoView({ behavior: 'smooth' });
-
-      // Wait for Firestore onSnapshot to populate events, then open modal.
-      setTimeout(function () {
-        if (typeof openViewEvent === 'function') {
-          openViewEvent(ev);
-        }
-      }, 1200);
-
-      // Clean the URL so refreshing does not re-open the modal.
-      window.history.replaceState({}, '', window.location.pathname + '#calendar');
     }
 
-    // Fresh page load (e.g. notification tap opens a new window).
-    window.addEventListener('load', openFromParams);
-    // PWA already open — notification tap changes the hash.
-    window.addEventListener('hashchange', openFromParams);
-  })();
+    // Scroll to calendar.
+    var cal = document.getElementById('calendar');
+    if (cal) cal.scrollIntoView({ behavior: 'smooth' });
+
+    // Open modal via exposed interface.
+    var attempts = 0;
+    var poll = setInterval(function () {
+      attempts++;
+      if (window._calNav && window._calNav.open) {
+        clearInterval(poll);
+        window._calNav.open(ev);
+      } else if (attempts > 20) {
+        clearInterval(poll);
+      }
+    }, 200);
+
+    // Clean URL.
+    window.history.replaceState({}, '', window.location.pathname + '#calendar');
+  };
+
+  // Run on fresh page load and on hash change (PWA already open).
+  window._openFromNotification();
+  window.addEventListener('hashchange', window._openFromNotification);
 
 </script>
 </body>
