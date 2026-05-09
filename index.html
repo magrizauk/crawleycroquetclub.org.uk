@@ -221,9 +221,8 @@
     .nav-links a:hover { color: var(--green-mid); }  /* colour handled separately */
     .nav-cta { background: var(--green-deep); color: var(--cream) !important; padding: 0.5rem 1.3rem !important; border-radius: 2px; font-size: 1rem; box-shadow: none !important; line-height: 1; }
     .nav-cta:hover { background: var(--green-mid) !important; color: var(--cream) !important; }
-    .notif-btn { background: transparent; border: 1.5px solid var(--green-light); color: var(--green-deep); padding: 0.4rem 1rem; border-radius: 2px; font-size: 0.82rem; font-family: var(--sans); letter-spacing: 0.05em; cursor: pointer; transition: background 0.2s, color 0.2s; white-space: nowrap; }
+    .notif-btn { background: transparent; border: 1.5px solid var(--green-mid); color: var(--green-mid); padding: 0.4rem 1rem; border-radius: 2px; font-size: 0.82rem; font-family: var(--sans); letter-spacing: 0.05em; cursor: pointer; transition: background 0.2s, color 0.2s; white-space: nowrap; }
     .notif-btn:hover, .notif-btn.notif-active { background: var(--green-deep); color: var(--cream); border-color: var(--green-deep); }
-    nav.scrolled-past-hero .notif-btn { border-color: var(--green-deep); }
     .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
     .hamburger span { display: block; width: 24px; height: 2px; background: var(--green-deep); }
 
@@ -248,7 +247,7 @@
       min-height: 100vh;
       background:
         linear-gradient(to right, rgba(15,36,24,0.82) 0%, rgba(15,36,24,0.55) 60%, rgba(15,36,24,0.25) 100%),
-        url('images/hero-bg.jpg') center/cover no-repeat;
+        url('images/hero-bg.jpg') 77% center/cover no-repeat;
       display: flex; align-items: center;
       padding: 0 4rem;
     }
@@ -826,16 +825,6 @@
     <li><a href="#calendar">Events</a></li>
     <li><a href="#location">Find Us</a></li>
     <li><a href="private-events.html">Private Events</a></li>
-    <li><button class="notif-btn" id="notifBtn" onclick="
-      if(typeof window._pushSubscribe === 'undefined') return;
-      if(Notification.permission === 'granted' && window._pushSubscribed) {
-        window._pushUnsubscribe();
-      } else {
-        Notification.requestPermission().then(function(p){
-          if(p === 'granted') window._pushSubscribe();
-        });
-      }
-    ">🔔 Get Notifications</button></li>
     <li><a href="#contact-form" class="nav-cta">Get In Touch</a></li>
   </ul>
   <div class="hamburger" id="hamburger">
@@ -1243,7 +1232,19 @@
         <div class="cal-month-title" id="calTitle"></div>
         <button id="calNext" title="Next month">&#8250;</button>
       </div>
-      <button class="cal-admin-btn" id="adminBtn">Admin Login</button>
+      <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+        <button class="notif-btn" id="notifBtn" onclick="
+          if(typeof window._pushSubscribe === 'undefined') return;
+          if(Notification.permission === 'granted' && window._pushSubscribed) {
+            window._pushUnsubscribe();
+          } else {
+            Notification.requestPermission().then(function(p){
+              if(p === 'granted') window._pushSubscribe();
+            });
+          }
+        ">🔔 Get Notifications</button>
+        <button class="cal-admin-btn" id="adminBtn">Admin Login</button>
+      </div>
     </div>
     <div class="cal-grid-wrap"><div class="cal-grid" id="calGrid"></div></div>
     <div class="cal-legend">
