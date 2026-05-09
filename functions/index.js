@@ -15,16 +15,18 @@ initializeApp();
 
 const db = getFirestore();
 
-// ─── Event data helper ────────────────────────────────────────────────────────
-// Packages raw event data to pass through the push notification payload
-// so the SW can forward it directly to the page via postMessage.
-function buildEventData(data) {
-  return {
-    title: data.title || '',
-    type:  data.type  || '',
-    date:  data.date  || '',
-    notes: data.notes || '',
-  };
+// Writes a notification document to Firestore so the page's onSnapshot
+// listener can react in real time and open the event modal.
+// Uses a single doc 'latest' to avoid accumulating data indefinitely.
+async function writeNotification(action, data) {
+  await db.collection('notifications').doc('latest').set({
+    action:    action,
+    title:     data.title  || '',
+    type:      data.type   || '',
+    date:      data.date   || '',
+    notes:     data.notes  || '',
+    updatedAt: new Date().toISOString(),
+  });
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -51,7 +53,7 @@ function formatDate(dateStr) {
 
 // Fan out a notification payload to every token in the fcm_tokens collection.
 // Removes any stale/invalid tokens automatically.
-async function sendToAll(title, body, tag, eventData) {
+async function sendToAll(title, body, tag) {
   const snapshot = await db.collection('fcm_tokens').get();
   if (snapshot.empty) return;
 
@@ -74,15 +76,10 @@ async function sendToAll(title, body, tag, eventData) {
         notification: {
           title,
           body,
-          icon:  './icons/icon-192.png',
-          badge: './icons/icon-192.png',
+          icon:  '/icons/icon-192.png',
+          badge: '/icons/icon-192.png',
           tag,
           renotify: true,
-          // Pass event data through notification so SW can postMessage to page.
-          data: {
-            url:   'https://magrizauk.github.io/crawleycroquetclub.org.uk/#calendar',
-            event: eventData || null,
-          },
         },
         fcmOptions: { link: 'https://magrizauk.github.io/crawleycroquetclub.org.uk/#calendar' },
       },
@@ -115,8 +112,11 @@ exports.onEventCreated = onDocumentCreated('events/{eventId}', async (event) => 
   const label = eventTypeLabel(data.type);
   const date  = formatDate(data.date);
   const title = `New ${label} Added`;
-  const body  = `${data.title}${date ? ' — ' + date : ''}`;
-  await sendToAll(title, body, 'ccc-event-created', buildEventData(data));
+  const body  = `${data.title}${date ? ' – ' + date : ''}`;
+  await Promise.all([
+    sendToAll(title, body, 'ccc-event-created'),
+    writeNotification('created', data),
+  ]);
 });
 
 exports.onEventUpdated = onDocumentUpdated('events/{eventId}', async (event) => {
@@ -124,8 +124,11 @@ exports.onEventUpdated = onDocumentUpdated('events/{eventId}', async (event) => 
   const label = eventTypeLabel(data.type);
   const date  = formatDate(data.date);
   const title = `${label} Updated`;
-  const body  = `${data.title}${date ? ' — ' + date : ''}`;
-  await sendToAll(title, body, 'ccc-event-updated', buildEventData(data));
+  const body  = `${data.title}${date ? ' – ' + date : ''}`;
+  await Promise.all([
+    sendToAll(title, body, 'ccc-event-updated'),
+    writeNotification('updated', data),
+  ]);
 });
 
 exports.onEventDeleted = onDocumentDeleted('events/{eventId}', async (event) => {
@@ -133,6 +136,9 @@ exports.onEventDeleted = onDocumentDeleted('events/{eventId}', async (event) => 
   const label = eventTypeLabel(data.type);
   const date  = formatDate(data.date);
   const title = `${label} Cancelled`;
-  const body  = `${data.title}${date ? ' — ' + date : ''} has been removed from the calendar.`;
-  await sendToAll(title, body, 'ccc-event-deleted', null);
+  const body  = `${data.title}${date ? ' – ' + date : ''} has been removed from the calendar.`;
+  await Promise.all([
+    sendToAll(title, body, 'ccc-event-deleted'),
+    writeNotification('deleted', data),
+  ]);
 });
