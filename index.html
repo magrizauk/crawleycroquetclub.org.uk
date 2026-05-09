@@ -86,9 +86,11 @@
     // ── Push notification subscription ───────────────────────────────────────
     async function subscribeToPush() {
       try {
+        // Register firebase-messaging-sw.js specifically for FCM background delivery.
+        const fmswReg = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
         const token = await getToken(messaging, {
           vapidKey: VAPID_KEY,
-          serviceWorkerRegistration: await navigator.serviceWorker.ready
+          serviceWorkerRegistration: fmswReg,
         });
         if (token) {
           // Store token in Firestore — token as doc ID makes it idempotent.
