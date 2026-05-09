@@ -8,7 +8,7 @@
 // caches to be cleared on the next visit.
 // ─────────────────────────────────────────────────────────────────────────────
 
-const CACHE_VERSION  = 'ccc-v3';
+const CACHE_VERSION  = 'ccc-v4';
 const SHELL_CACHE    = `${CACHE_VERSION}-shell`;
 const DYNAMIC_CACHE  = `${CACHE_VERSION}-dynamic`;
 
@@ -143,9 +143,13 @@ self.addEventListener('push', function (event) {
     body:    data.body  || 'New club update',
     icon:    './icons/icon-192.png',
     badge:   './icons/icon-192.png',
-    tag:     data.tag   || 'ccc-notification',   // replaces previous notification of same tag
+    tag:     data.tag   || 'ccc-notification',
     renotify: true,
-    data:    { url: data.url || './#calendar' },
+    data:    {
+      url:   data.url || './#calendar',
+      // Store full event data so notificationclick can post it to the page.
+      event: data.event || null,
+    },
   };
 
   event.waitUntil(
@@ -155,24 +159,40 @@ self.addEventListener('push', function (event) {
 
 self.addEventListener('notificationclick', function (event) {
   event.notification.close();
-  var targetUrl = (event.notification.data && event.notification.data.url)
-    ? event.notification.data.url
-    : './#calendar';
+
+  var notifData = event.notification.data || {};
+  var targetUrl = notifData.url || './#calendar';
+  var eventData = notifData.event || null;
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true })
       .then(function (clientList) {
-        // If the site is already open, focus it and navigate.
+        // If the site is already open, focus it and post event data directly.
         for (var i = 0; i < clientList.length; i++) {
           var client = clientList[i];
           if ('focus' in client) {
             client.focus();
-            client.navigate(targetUrl);
+            // Post the event data to the page — avoids URL parameter issues.
+            if (eventData) {
+              client.postMessage({ type: 'NOTIFICATION_EVENT', event: eventData });
+            }
             return;
           }
         }
-        // Otherwise open a new window.
-        if (clients.openWindow) return clients.openWindow(targetUrl);
+        // Site not open — open it. Store event data in SW so the page can
+        // retrieve it on load via a subsequent message.
+        var openPromise = clients.openWindow(targetUrl);
+        if (eventData) {
+          openPromise.then(function (newClient) {
+            if (newClient) {
+              // Give the page time to load before posting.
+              setTimeout(function () {
+                newClient.postMessage({ type: 'NOTIFICATION_EVENT', event: eventData });
+              }, 2000);
+            }
+          });
+        }
+        return openPromise;
       })
   );
 });

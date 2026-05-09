@@ -2007,24 +2007,9 @@
   renderCalendar();
 
   // ── Notification tap handler ───────────────────────────────────────────────
-  // Reads event details from URL parameters and opens the view modal.
-  // Handles both fresh page loads (notification opens new window) and
-  // hash changes (notification focuses existing PWA window).
-  function _parseNotificationUrl() {
-    var href   = window.location.href;
-    var qIndex = href.indexOf('?');
-    if (qIndex === -1) return null;
-    var params = new URLSearchParams(href.slice(qIndex));
-    if (!params.get('event')) return null;
-    return {
-      title: params.get('title') || '',
-      type:  params.get('type')  || 'other',
-      date:  params.get('date')  || '',
-      notes: params.get('notes') || '',
-    };
-  }
-
-  function _handleNotification(ev) {
+  // Receives event data via SW postMessage and opens the view modal.
+  // This avoids URL parameter issues across platforms.
+  function _handleNotificationEvent(ev) {
     if (!ev) return;
 
     // Navigate calendar to event month/year.
@@ -2039,7 +2024,7 @@
     var cal = document.getElementById('calendar');
     if (cal) cal.scrollIntoView({ behavior: 'smooth' });
 
-    // Open modal — poll until Firestore events are loaded.
+    // Open modal — poll briefly to let Firestore populate the month's events.
     var attempts = 0;
     var poll = setInterval(function () {
       attempts++;
@@ -2050,31 +2035,13 @@
         clearInterval(poll);
       }
     }, 200);
-
-    // Clean URL so refreshing does not re-open the modal.
-    window.history.replaceState({}, '', window.location.pathname + '#calendar');
   }
 
-  // On fresh page load — poll until _calNav is ready (Firebase may not have
-  // initialised synchronously on mobile), then process the URL parameters.
-  (function () {
-    var ev = _parseNotificationUrl();
-    if (!ev) return;
-    var attempts = 0;
-    var poll = setInterval(function () {
-      attempts++;
-      if (window._calNav) {
-        clearInterval(poll);
-        _handleNotification(ev);
-      } else if (attempts > 50) {
-        clearInterval(poll);
-      }
-    }, 100);
-  })();
-
-  // On hash change — PWA already open, _calNav is ready immediately.
-  window.addEventListener('hashchange', function () {
-    _handleNotification(_parseNotificationUrl());
+  // Listen for messages from the Service Worker.
+  navigator.serviceWorker.addEventListener('message', function (msg) {
+    if (msg.data && msg.data.type === 'NOTIFICATION_EVENT') {
+      _handleNotificationEvent(msg.data.event);
+    }
   });
 
 </script>
