@@ -8,7 +8,7 @@
 // caches to be cleared on the next visit.
 // ─────────────────────────────────────────────────────────────────────────────
 
-const CACHE_VERSION  = 'ccc-v5';
+const CACHE_VERSION  = 'ccc-v6';
 const SHELL_CACHE    = `${CACHE_VERSION}-shell`;
 const DYNAMIC_CACHE  = `${CACHE_VERSION}-dynamic`;
 
@@ -132,23 +132,6 @@ function networkFirst(request, cacheName) {
 }
 
 
-// ─── SW Message Handler ─────────────────────────────────────────────────────
-// Page sends 'GET_NOTIFICATION_EVENT' on load; SW replies with any pending
-// event data stored from a notification tap that opened a new window.
-
-self.addEventListener('message', function (event) {
-  if (event.data && event.data.type === 'GET_NOTIFICATION_EVENT') {
-    if (self._pendingNotificationEvent) {
-      event.source.postMessage({
-        type:  'NOTIFICATION_EVENT',
-        event: self._pendingNotificationEvent,
-      });
-      self._pendingNotificationEvent = null;
-    }
-  }
-});
-
-
 // ─── Push Notifications ──────────────────────────────────────────────────────
 
 self.addEventListener('push', function (event) {
@@ -162,11 +145,7 @@ self.addEventListener('push', function (event) {
     badge:   './icons/icon-192.png',
     tag:     data.tag   || 'ccc-notification',
     renotify: true,
-    data:    {
-      url:   data.url || './#calendar',
-      // Store full event data so notificationclick can post it to the page.
-      event: data.event || null,
-    },
+    data:    { url: data.url || './#calendar' },
   };
 
   event.waitUntil(
@@ -176,31 +155,19 @@ self.addEventListener('push', function (event) {
 
 self.addEventListener('notificationclick', function (event) {
   event.notification.close();
-
-  var notifData = event.notification.data || {};
-  var targetUrl = notifData.url || './#calendar';
-  var eventData = notifData.event || null;
+  var targetUrl = 'https://magrizauk.github.io/crawleycroquetclub.org.uk/#calendar';
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true })
       .then(function (clientList) {
-        // If the site is already open, focus it and post event data directly.
         for (var i = 0; i < clientList.length; i++) {
           var client = clientList[i];
           if ('focus' in client) {
             client.focus();
-            // Post the event data to the page — avoids URL parameter issues.
-            if (eventData) {
-              client.postMessage({ type: 'NOTIFICATION_EVENT', event: eventData });
-            }
             return;
           }
         }
-        // Site not open — open it. Store event data in the SW's global scope
-        // so the page can retrieve it by sending a 'GET_NOTIFICATION_EVENT'
-        // message once it has loaded and registered its listener.
-        self._pendingNotificationEvent = eventData;
-        return clients.openWindow(targetUrl);
+        if (clients.openWindow) return clients.openWindow(targetUrl);
       })
   );
 });

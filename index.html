@@ -2006,53 +2006,55 @@
 
   renderCalendar();
 
-  // ── Notification tap handler ───────────────────────────────────────────────
-  // Receives event data via SW postMessage and opens the view modal.
-  // This avoids URL parameter issues across platforms.
-  function _handleNotificationEvent(ev) {
-    if (!ev) return;
+  // ── Notification listener ─────────────────────────────────────────────────
+  // Watches Firestore 'notifications/latest' for changes written by the
+  // Cloud Function. Opens the event modal whenever a new notification arrives.
+  // Works regardless of whether the app was already open or just launched.
+  (function () {
+    var lastSeen = null;
 
-    // Navigate calendar to event month/year.
-    if (ev.date) {
-      var parts = ev.date.split('-');
-      if (parts.length === 3) {
-        window._calNav.go(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1);
+    function handleNotification(ev) {
+      if (!ev || !ev.title) return;
+
+      // Navigate calendar to the event month/year.
+      if (ev.date) {
+        var parts = ev.date.split('-');
+        if (parts.length === 3) {
+          window._calNav.go(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1);
+        }
       }
+
+      // Scroll to calendar.
+      var cal = document.getElementById('calendar');
+      if (cal) cal.scrollIntoView({ behavior: 'smooth' });
+
+      // Open the view modal.
+      setTimeout(function () {
+        if (window._calNav && window._calNav.open) {
+          window._calNav.open(ev);
+        }
+      }, 800);
     }
 
-    // Scroll to calendar.
-    var cal = document.getElementById('calendar');
-    if (cal) cal.scrollIntoView({ behavior: 'smooth' });
+    // Start listening once Firebase is ready.
+    var initInterval = setInterval(function () {
+      if (!window._db || !window._fsModules) return;
+      clearInterval(initInterval);
 
-    // Open modal — poll briefly to let Firestore populate the month's events.
-    var attempts = 0;
-    var poll = setInterval(function () {
-      attempts++;
-      if (window._calNav && window._calNav.open) {
-        clearInterval(poll);
-        window._calNav.open(ev);
-      } else if (attempts > 30) {
-        clearInterval(poll);
-      }
+      var fs      = window._fsModules;
+      var docRef  = fs.doc(window._db, 'notifications', 'latest');
+
+      fs.onSnapshot(docRef, function (snap) {
+        if (!snap.exists()) return;
+        var data = snap.data();
+        // Ignore the initial load and any doc we've already handled.
+        if (lastSeen === null) { lastSeen = data.updatedAt; return; }
+        if (data.updatedAt === lastSeen) return;
+        lastSeen = data.updatedAt;
+        handleNotification(data);
+      });
     }, 200);
-  }
-
-  // Listen for messages from the Service Worker.
-  navigator.serviceWorker.addEventListener('message', function (msg) {
-    if (msg.data && msg.data.type === 'NOTIFICATION_EVENT') {
-      _handleNotificationEvent(msg.data.event);
-    }
-  });
-
-  // On page load, ask the SW if there's a pending notification event
-  // (handles the case where a notification tap opened a new window).
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.ready.then(function (reg) {
-      if (reg.active) {
-        reg.active.postMessage({ type: 'GET_NOTIFICATION_EVENT' });
-      }
-    });
-  }
+  })();
 
 </script>
 </body>
