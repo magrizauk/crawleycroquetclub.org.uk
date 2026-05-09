@@ -32,7 +32,7 @@
     body { font-family: var(--sans); background: var(--cream); color: var(--text-dark); }
 
     /* NAV */
-    .nav-logo-img { height: 32px; width: auto; display: block; }
+    .nav-logo-img { height: 32px; width: auto; display: block; filter: drop-shadow(0 0 0.3px #222222) drop-shadow(0 0 0.3px #222222); }
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       background: rgba(248,246,240,0.98);
@@ -219,13 +219,16 @@
     footer p { color: rgba(247,243,234,0.35); font-size: 0.9rem; font-weight: 300; }
     footer a { color: rgba(247,243,234,0.5); text-decoration: none; }
     footer a:hover { color: rgba(201,168,76,1); }
-    .footer-logo-img { height: 22px; width: auto; display: block; filter: invert(1) opacity(0.75); }
+    .footer-logo-img {
+      height: 22px; width: auto; display: block;
+      filter: brightness(0) invert(1) opacity(0.75);
+    }
     @media (max-width: 700px) {
       footer { flex-direction: column; gap: 0.8rem; text-align: center; padding: 2rem 1.5rem; }
     }
 
     @media (max-width: 700px) {
-      .nav-logo-img { height: 32px; width: auto; display: block; }
+      .nav-logo-img { height: 32px; width: auto; display: block; filter: drop-shadow(0 0 0.3px #222222) drop-shadow(0 0 0.3px #222222); }
     nav { padding: 0 1.5rem; }
       .page-header { padding: 7rem 1.5rem 2.5rem; }
       .gallery-wrap { padding: 2rem 1.5rem 4rem; }
@@ -241,7 +244,7 @@
 
 <!-- NAV -->
 <nav>
-  <a class="nav-logo-wrap" href="index.html" style="display:flex;align-items:center;text-decoration:none;">
+  <a class="nav-logo-wrap" href="index.html" >
     <img src="images/Line_CCC.svg" alt="Crawley Croquet Club" class="nav-logo-img" />
   </a>
   <div class="nav-right">

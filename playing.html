@@ -22,7 +22,6 @@
       padding: 0 3rem; height: 80px;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .nav-logo { height: 28px; width: auto; display: block; }
     .nav-logo-wrap { display: flex; align-items: center; text-decoration: none; }
     .nav-links-sub { display: flex; gap: 2rem; list-style: none; align-items: center; }
     .nav-links-sub a {
@@ -55,7 +54,7 @@
       border-bottom: 1px solid rgba(26,58,42,0.12);
     }
     .nav-logo-wrap { display: flex; align-items: center; text-decoration: none; height: 48px; overflow: hidden; }
-    .nav-logo-img { height: 32px; width: auto; display: block; }
+    .nav-logo-img { height: 32px; width: auto; display: block; filter: drop-shadow(0 0 0.3px #222222) drop-shadow(0 0 0.3px #222222); }
     .nav-links-sub { display: flex; gap: 2rem; list-style: none; align-items: center; }
     .nav-links-sub a {
       color: var(--green-deep); text-decoration: none; font-size: 1rem;
@@ -87,7 +86,7 @@
     .page-header{background:var(--green-deep);padding:8rem 4rem 3.5rem;}
     .page-header .label{font-size:0.82rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--green-light);font-weight:700;margin-bottom:0.8rem;}
     .page-header h1{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);color:var(--cream);line-height:1.1;}
-    .page-header h1 em{font-style:italic;color:var(--gold-light);}
+    .page-header h1 em { font-style: italic; color: var(--gold-light); }
     .content-section{padding:5rem 4rem;}
     .content-section:nth-child(odd){background:var(--white);}
     .content-section:nth-child(even){background:var(--cream-dark);}
@@ -113,7 +112,10 @@
     footer p { color: rgba(247,243,234,0.35); font-size: 0.9rem; font-weight: 300; }
     footer a { color: rgba(247,243,234,0.5); text-decoration: none; }
     footer a:hover { color: rgba(201,168,76,1); }
-    .footer-logo-img { height: 22px; width: auto; display: block; filter: invert(1) opacity(0.75); }
+    .footer-logo-img {
+      height: 22px; width: auto; display: block;
+      filter: brightness(0) invert(1) opacity(0.75);
+    }
     @media (max-width: 700px) {
       footer { flex-direction: column; gap: 0.8rem; text-align: center; padding: 2rem 1.5rem; }
     }
