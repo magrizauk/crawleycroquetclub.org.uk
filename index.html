@@ -1995,9 +1995,8 @@
   renderCalendar();
 
   // ── Notification tap handler ───────────────────────────────────────────────
-  // When a push notification is tapped, the Cloud Function appends event
-  // details as URL query parameters. We read them here, navigate the calendar
-  // to the correct month, and open the view modal.
+  // Reads event details from URL hash parameters and opens the view modal.
+  // Listens on both 'load' (fresh open) and 'hashchange' (already-open PWA).
   (function () {
     function openFromParams() {
       var hash   = window.location.hash || '';
@@ -2028,8 +2027,7 @@
       var calSection = document.getElementById('calendar');
       if (calSection) calSection.scrollIntoView({ behavior: 'smooth' });
 
-      // Wait for Firestore onSnapshot to populate events for the month,
-      // then open the modal. 1200ms gives the listener time to load.
+      // Wait for Firestore onSnapshot to populate events, then open modal.
       setTimeout(function () {
         if (typeof openViewEvent === 'function') {
           openViewEvent(ev);
@@ -2040,7 +2038,10 @@
       window.history.replaceState({}, '', window.location.pathname + '#calendar');
     }
 
+    // Fresh page load (e.g. notification tap opens a new window).
     window.addEventListener('load', openFromParams);
+    // PWA already open — notification tap changes the hash.
+    window.addEventListener('hashchange', openFromParams);
   })();
 
 </script>
