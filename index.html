@@ -201,6 +201,28 @@
     }
     /* Nav logo text: dark green to read on off-white nav */
     .svg-logo-nav path { fill: var(--green-deep) !important; }
+    /* Ball outlines — dark on light background (navbar), light on dark (hero/footer) */
+    .svg-logo-nav #ln_circle38,
+    .svg-logo-nav #ln_circle229,
+    .svg-logo-nav #ln_circle343,
+    .svg-logo-nav #ln_circle457 {
+      stroke: #222222 !important;
+      stroke-width: 0.08 !important;
+    }
+    .svg-logo-hero #v3h_circle30,
+    .svg-logo-hero #v3h_circle31,
+    .svg-logo-hero #v3h_circle32,
+    .svg-logo-hero #v3h_circle33 {
+      stroke: #ffffff !important;
+      stroke-width: 0.06 !important;
+    }
+    .footer-logo-wrap #lf_circle38,
+    .footer-logo-wrap #lf_circle229,
+    .footer-logo-wrap #lf_circle343,
+    .footer-logo-wrap #lf_circle457 {
+      stroke: rgba(240,234,216,0.9) !important;
+      stroke-width: 0.08 !important;
+    }
 
     .nav-links { display: flex; gap: 2rem; list-style: none; justify-content: flex-end; }
     .nav-links a {
@@ -275,7 +297,7 @@
     .section-label { font-size: 0.82rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--green-light); font-weight: 700; margin-bottom: 0.8rem; }
     .section-title { font-family: var(--serif); font-size: clamp(2rem, 3.5vw, 3rem); color: var(--green-deep); line-height: 1.15; margin-bottom: 1.4rem; }
     .section-title em { font-style: italic; color: var(--green-mid); }
-    .section-body { font-size: 1.08rem; line-height: 1.85; color: var(--text-mid); font-weight: 300; max-width: 580px; }
+    .section-body { font-size: 1.15rem; line-height: 1.85; color: var(--text-mid); font-weight: 300; max-width: 580px; }
 
     /* ABOUT */
     #about { background: var(--white); display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
@@ -293,7 +315,7 @@
     #history .section-title em { color: var(--green-light); }
     .history-inner { max-width: 820px; margin: 0 auto; }
     .history-body {
-      font-size: 1.08rem; line-height: 1.9; color: rgba(247,243,234,0.82);
+      font-size: 1.15rem; line-height: 1.9; color: rgba(247,243,234,0.82);
       font-weight: 300; margin-top: 1rem;
     }
     .history-body p + p { margin-top: 1.2rem; }
@@ -339,7 +361,7 @@
       border-left: 3px solid var(--green-light);
       line-height: 1.2;
     }
-    .why-card p { font-size: 1rem; line-height: 1.8; color: var(--text-mid); font-weight: 300; }
+    .why-card p { font-size: 1.08rem; line-height: 1.8; color: var(--text-mid); font-weight: 300; }
 
     /* MEMBERSHIP */
     #membership { background: var(--white); display: grid; grid-template-columns: 1fr 1fr; padding: 0; }
@@ -1698,15 +1720,27 @@
       }
     }
 
-    hamburger.addEventListener('click', function() {
+    function closeMenu() {
+      navLinks.classList.remove('open');
+    }
+
+    hamburger.addEventListener('click', function(e) {
+      e.stopPropagation();
       navLinks.classList.toggle('open');
     });
 
+    // Close on any nav link tap.
     navLinks.querySelectorAll('a').forEach(function(a) {
-      a.addEventListener('click', function() {
-        navLinks.classList.remove('open');
-      });
+      a.addEventListener('click', closeMenu);
     });
+
+    // Close on tap/click outside the nav.
+    document.addEventListener('click', function(e) {
+      if (!nav.contains(e.target)) closeMenu();
+    });
+
+    // Close on scroll.
+    window.addEventListener('scroll', closeMenu, { passive: true });
 
     checkFit();
     var t;
