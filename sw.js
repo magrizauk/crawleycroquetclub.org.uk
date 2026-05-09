@@ -8,7 +8,7 @@
 // caches to be cleared on the next visit.
 // ─────────────────────────────────────────────────────────────────────────────
 
-const CACHE_VERSION  = 'ccc-v4';
+const CACHE_VERSION  = 'ccc-v5';
 const SHELL_CACHE    = `${CACHE_VERSION}-shell`;
 const DYNAMIC_CACHE  = `${CACHE_VERSION}-dynamic`;
 
@@ -132,6 +132,23 @@ function networkFirst(request, cacheName) {
 }
 
 
+// ─── SW Message Handler ─────────────────────────────────────────────────────
+// Page sends 'GET_NOTIFICATION_EVENT' on load; SW replies with any pending
+// event data stored from a notification tap that opened a new window.
+
+self.addEventListener('message', function (event) {
+  if (event.data && event.data.type === 'GET_NOTIFICATION_EVENT') {
+    if (self._pendingNotificationEvent) {
+      event.source.postMessage({
+        type:  'NOTIFICATION_EVENT',
+        event: self._pendingNotificationEvent,
+      });
+      self._pendingNotificationEvent = null;
+    }
+  }
+});
+
+
 // ─── Push Notifications ──────────────────────────────────────────────────────
 
 self.addEventListener('push', function (event) {
@@ -179,20 +196,11 @@ self.addEventListener('notificationclick', function (event) {
             return;
           }
         }
-        // Site not open — open it. Store event data in SW so the page can
-        // retrieve it on load via a subsequent message.
-        var openPromise = clients.openWindow(targetUrl);
-        if (eventData) {
-          openPromise.then(function (newClient) {
-            if (newClient) {
-              // Give the page time to load before posting.
-              setTimeout(function () {
-                newClient.postMessage({ type: 'NOTIFICATION_EVENT', event: eventData });
-              }, 2000);
-            }
-          });
-        }
-        return openPromise;
+        // Site not open — open it. Store event data in the SW's global scope
+        // so the page can retrieve it by sending a 'GET_NOTIFICATION_EVENT'
+        // message once it has loaded and registered its listener.
+        self._pendingNotificationEvent = eventData;
+        return clients.openWindow(targetUrl);
       })
   );
 });

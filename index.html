@@ -2044,6 +2044,16 @@
     }
   });
 
+  // On page load, ask the SW if there's a pending notification event
+  // (handles the case where a notification tap opened a new window).
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.ready.then(function (reg) {
+      if (reg.active) {
+        reg.active.postMessage({ type: 'GET_NOTIFICATION_EVENT' });
+      }
+    });
+  }
+
 </script>
 </body>
 </html>
