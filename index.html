@@ -2007,24 +2007,28 @@
   renderCalendar();
 
   // ── Notification tap handler ───────────────────────────────────────────────
-  // Placed after renderCalendar() so all calendar functions are initialised.
-  // Uses window._calNav to avoid closure scope issues.
-  window._openFromNotification = function () {
+  // Reads event details from URL parameters and opens the view modal.
+  // Handles both fresh page loads (notification opens new window) and
+  // hash changes (notification focuses existing PWA window).
+  function _parseNotificationUrl() {
     var href   = window.location.href;
     var qIndex = href.indexOf('?');
-    if (qIndex === -1) return;
+    if (qIndex === -1) return null;
     var params = new URLSearchParams(href.slice(qIndex));
-    if (!params.get('event')) return;
-
-    var ev = {
+    if (!params.get('event')) return null;
+    return {
       title: params.get('title') || '',
       type:  params.get('type')  || 'other',
       date:  params.get('date')  || '',
       notes: params.get('notes') || '',
     };
+  }
 
-    // Navigate to the event month/year via the exposed interface.
-    if (ev.date && window._calNav) {
+  function _handleNotification(ev) {
+    if (!ev) return;
+
+    // Navigate calendar to event month/year.
+    if (ev.date) {
       var parts = ev.date.split('-');
       if (parts.length === 3) {
         window._calNav.go(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1);
@@ -2035,25 +2039,43 @@
     var cal = document.getElementById('calendar');
     if (cal) cal.scrollIntoView({ behavior: 'smooth' });
 
-    // Open modal via exposed interface.
+    // Open modal — poll until Firestore events are loaded.
     var attempts = 0;
     var poll = setInterval(function () {
       attempts++;
       if (window._calNav && window._calNav.open) {
         clearInterval(poll);
         window._calNav.open(ev);
-      } else if (attempts > 20) {
+      } else if (attempts > 30) {
         clearInterval(poll);
       }
     }, 200);
 
-    // Clean URL.
+    // Clean URL so refreshing does not re-open the modal.
     window.history.replaceState({}, '', window.location.pathname + '#calendar');
-  };
+  }
 
-  // Run on fresh page load and on hash change (PWA already open).
-  window._openFromNotification();
-  window.addEventListener('hashchange', window._openFromNotification);
+  // On fresh page load — poll until _calNav is ready (Firebase may not have
+  // initialised synchronously on mobile), then process the URL parameters.
+  (function () {
+    var ev = _parseNotificationUrl();
+    if (!ev) return;
+    var attempts = 0;
+    var poll = setInterval(function () {
+      attempts++;
+      if (window._calNav) {
+        clearInterval(poll);
+        _handleNotification(ev);
+      } else if (attempts > 50) {
+        clearInterval(poll);
+      }
+    }, 100);
+  })();
+
+  // On hash change — PWA already open, _calNav is ready immediately.
+  window.addEventListener('hashchange', function () {
+    _handleNotification(_parseNotificationUrl());
+  });
 
 </script>
 </body>
