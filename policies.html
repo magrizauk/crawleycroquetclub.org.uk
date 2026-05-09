@@ -18,9 +18,9 @@
       --cream:       #f7f3ea;
       --cream-dark:  #ede8d8;
       --gold:        #c9a84c;
+      --gold-light:  #e8cb7a;
       --white:       #ffffff;
       --text-dark:   #1c1c1c;
-      --gold-light: #e8cb7a;
       --text-mid:    #3d4a3a;
       --serif:       'Libre Baskerville', Georgia, serif;
       --sans:        'Lato', 'Helvetica Neue', Arial, sans-serif;
@@ -28,7 +28,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: var(--sans); background: var(--cream); color: var(--text-dark); }
     nav { background: rgba(248,246,240,0.98); border-bottom: 1px solid rgba(26,58,42,0.12); padding: 0 4rem; height: 80px; display: flex; align-items: center; }
-    /* nav a styles handled by nav-links CSS below */
+
     .page-header { background: var(--green-deep); padding: 8rem 4rem 3.5rem; }
     .page-header .label { font-size: 0.82rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--green-light); font-weight: 700; margin-bottom: 0.8rem; }
     .page-header h1 em { font-style: italic; color: var(--gold-light); }
@@ -53,6 +53,8 @@
       .content { padding: 3rem 1.5rem 4rem; }
       footer { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
     }
+
+    /* ── Shared nav & footer ─────────────────────────────────────────── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
@@ -68,49 +70,22 @@
       height: 32px; width: auto; display: block;
       opacity: 1; transform: translateY(0);
     }
-    /* Nav logo text: dark green to read on off-white nav */
     .svg-logo-nav path { fill: var(--green-deep) !important; }
-    /* Ball outlines — dark on light background (navbar), light on dark (hero/footer) */
     .svg-logo-nav #ln_circle38,
     .svg-logo-nav #ln_circle229,
     .svg-logo-nav #ln_circle343,
     .svg-logo-nav #ln_circle457 {
-      stroke: #222222 !important;
-      stroke-width: 0.08 !important;
+      stroke: #222222 !important; stroke-width: 0.08 !important;
     }
-    .svg-logo-hero #v3h_circle30,
-    .svg-logo-hero #v3h_circle31,
-    .svg-logo-hero #v3h_circle32,
-    .svg-logo-hero #v3h_circle33 {
-      stroke: #ffffff !important;
-      stroke-width: 0.06 !important;
-    }
-    .footer-logo-wrap #lf_circle38,
-    .footer-logo-wrap #lf_circle229,
-    .footer-logo-wrap #lf_circle343,
-    .footer-logo-wrap #lf_circle457 {
-      stroke: rgba(240,234,216,0.9) !important;
-      stroke-width: 0.08 !important;
-    }
-
-    .nav-links { display: flex; gap: 2rem; list-style: none; justify-content: flex-end; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; justify-content: flex-end; align-items: center; }
     .nav-links a {
       color: var(--green-deep); text-decoration: none; font-size: 1rem;
       letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700;
       transition: color 0.2s, box-shadow 0.2s;
-      padding-bottom: 3px;
-      box-shadow: inset 0 -2px 0 transparent;
+      padding-bottom: 3px; box-shadow: inset 0 -2px 0 transparent;
     }
-    /* Hover: solid underline */
-    .nav-links a:hover {
-      box-shadow: inset 0 -2px 0 var(--green-deep);
-    }
-    /* Active section: lighter underline */
-    .nav-links a.nav-active {
-      box-shadow: inset 0 -2px 0 rgba(45,106,79,0.4);
-    }
-    .nav-links a:hover { color: var(--green-mid); }  /* colour handled separately */
-    .nav-cta { background: var(--green-deep); color: var(--cream) !important; padding: 0.5rem 1.3rem !important; border-radius: 2px; font-size: 1rem; box-shadow: none !important; line-height: 1; }
+    .nav-links a:hover { color: var(--green-mid); box-shadow: inset 0 -2px 0 var(--green-deep); }
+    .nav-cta { background: var(--green-deep); color: var(--cream) !important; padding: 0.5rem 1.3rem !important; border-radius: 2px; font-size: 1rem; box-shadow: none !important; line-height: 1; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; text-decoration: none; }
     .nav-cta:hover { background: var(--green-mid) !important; color: var(--cream) !important; }
     footer {
       background: #0f2418; padding: 2rem 4rem;
@@ -120,10 +95,19 @@
     .footer-logo-wrap { height: 28px; display: flex; align-items: center; }
     .footer-logo-wrap .svg-logo-h { height: 22px; width: auto; display: block; }
     .footer-logo-wrap .svg-logo-h path { fill: rgba(240,234,216,0.75) !important; }
+    .footer-logo-wrap #lf_circle38,
+    .footer-logo-wrap #lf_circle229,
+    .footer-logo-wrap #lf_circle343,
+    .footer-logo-wrap #lf_circle457 {
+      stroke: rgba(240,234,216,0.9) !important; stroke-width: 0.08 !important;
+    }
     footer p { color: rgba(247,243,234,0.35); font-size: 0.9rem; font-weight: 300; }
     footer a { color: rgba(247,243,234,0.5); text-decoration: none; }
     footer a:hover { color: rgba(201,168,76,1); }
     @media (max-width: 700px) {
+      nav { padding: 0 1.5rem; }
+      .nav-links { gap: 1rem; }
+      .nav-links a:not(.nav-cta) { display: none; }
       footer { flex-direction: column; gap: 0.8rem; text-align: center; padding: 2rem 1.5rem; }
     }
   </style>
@@ -299,7 +283,7 @@
     </g>
   </g>
 </svg></a>
-  <ul class="nav-links" style="display:flex;">
+  <ul class="nav-links">
     <li><a href="index.html" class="nav-cta">Back to Main Site</a></li>
   </ul>
 </nav>
