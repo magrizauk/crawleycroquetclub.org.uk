@@ -21,17 +21,18 @@
       --white:       #ffffff;
       --text-dark:   #1c1c1c;
       --text-mid:    #3d4a3a;
+      --gold-light:  #e8cb7a;
       --serif:       'Libre Baskerville', Georgia, serif;
       --sans:        'Lato', 'Helvetica Neue', Arial, sans-serif;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: var(--sans); background: var(--cream); color: var(--text-dark); }
     nav { background: rgba(248,246,240,0.98); border-bottom: 1px solid rgba(26,58,42,0.12); padding: 0 4rem; height: 80px; display: flex; align-items: center; }
-    nav a { font-family: var(--serif); color: var(--green-deep); text-decoration: none; font-size: 1rem; }
-    nav a:hover { color: var(--green-mid); }
-    .page-header { background: var(--green-deep); padding: 4rem 4rem 3rem; }
+    /* nav a styles handled by .nav-links-sub */
+    .page-header { background: var(--green-deep); padding: 8rem 4rem 3.5rem; }
     .page-header .label { font-size: 0.82rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--green-light); font-weight: 700; margin-bottom: 0.8rem; }
     .page-header h1 { font-family: var(--serif); font-size: clamp(2rem, 4vw, 3rem); color: var(--cream); line-height: 1.1; }
+    .page-header h1 em { font-style: italic; color: var(--gold-light); }
     .content { max-width: 780px; margin: 0 auto; padding: 4rem 2rem 6rem; margin-top: 80px; }
     .policy-section { margin-bottom: 3.5rem; }
     .policy-section + .policy-section { padding-top: 3.5rem; border-top: 1px solid var(--cream-dark); }
@@ -74,6 +75,8 @@
       background: var(--green-deep); color: var(--cream) !important;
       padding: 0.5rem 1.3rem; border-radius: 2px; font-size: 1rem;
       text-decoration: none; white-space: nowrap;
+      font-family: var(--sans); font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
     .nav-cta-sub:hover { background: var(--green-mid) !important; color: var(--cream) !important; }
     @media (max-width: 700px) {
@@ -89,12 +92,12 @@
     footer p { color: rgba(247,243,234,0.35); font-size: 0.9rem; font-weight: 300; }
     footer a { color: rgba(247,243,234,0.5); text-decoration: none; }
     footer a:hover { color: rgba(201,168,76,1); }
-    .footer-logo-img { height: 22px; width: auto; display: block; opacity: 0.75; filter: invert(1); }
+    .footer-logo-img { height: 22px; width: auto; display: block; filter: invert(1) opacity(0.75); }
     @media (max-width: 700px) {
       footer { flex-direction: column; gap: 0.8rem; text-align: center; padding: 2rem 1.5rem; }
     }
     @media (max-width: 700px) {
-      .page-header { padding: 3rem 1.5rem 2rem; }
+      .page-header { padding: 7rem 1.5rem 2.5rem; }
       .content { padding: 3rem 1.5rem 4rem; }
     }
   </style>
@@ -102,18 +105,18 @@
 <body>
 
 <nav>
-  <a class="nav-logo-wrap" href="#" onclick="history.length > 1 ? history.back() : window.location='index.html'; return false;">
+  <a class="nav-logo-wrap" href="index.html">
     <img src="images/Line_CCC.svg" alt="Crawley Croquet Club" class="nav-logo-img" />
   </a>
   <ul class="nav-links-sub">
     
-    <li><a href="#" class="nav-cta-sub" onclick="history.length > 1 ? history.back() : window.location='index.html'; return false;">Back to Main Site</a></li>
+    <li><a href="index.html" class="nav-cta-sub">Back to Main Site</a></li>
   </ul>
 </nav>
 
 <div class="page-header">
   <div class="label">Club Policies</div>
-  <h1>Privacy &amp; Safeguarding</h1>
+  <h1>Privacy &amp; <em>Safeguarding</em></h1>
 </div>
 
 <div class="content">

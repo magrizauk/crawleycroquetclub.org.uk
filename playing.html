@@ -43,6 +43,8 @@
       background: var(--green-deep); color: var(--cream) !important;
       padding: 0.5rem 1.3rem; border-radius: 2px; font-size: 1rem;
       text-decoration: none; white-space: nowrap;
+      font-family: var(--sans); font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
     .nav-cta-sub:hover { background: var(--green-mid) !important; color: var(--cream) !important; }
     nav {
@@ -73,6 +75,8 @@
       background: var(--green-deep); color: var(--cream) !important;
       padding: 0.5rem 1.3rem; border-radius: 2px; font-size: 1rem;
       text-decoration: none; white-space: nowrap;
+      font-family: var(--sans); font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
     .nav-cta-sub:hover { background: var(--green-mid) !important; color: var(--cream) !important; }
     @media (max-width: 700px) {
@@ -109,7 +113,7 @@
     footer p { color: rgba(247,243,234,0.35); font-size: 0.9rem; font-weight: 300; }
     footer a { color: rgba(247,243,234,0.5); text-decoration: none; }
     footer a:hover { color: rgba(201,168,76,1); }
-    .footer-logo-img { height: 22px; width: auto; display: block; opacity: 0.75; filter: invert(1); }
+    .footer-logo-img { height: 22px; width: auto; display: block; filter: invert(1) opacity(0.75); }
     @media (max-width: 700px) {
       footer { flex-direction: column; gap: 0.8rem; text-align: center; padding: 2rem 1.5rem; }
     }
@@ -118,13 +122,13 @@
 </head>
 <body>
 <nav>
-  <a class="nav-logo-wrap" href="#" onclick="history.length > 1 ? history.back() : window.location='index.html'; return false;">
+  <a class="nav-logo-wrap" href="index.html">
     <img src="images/Line_CCC.svg" alt="Crawley Croquet Club" class="nav-logo-img" />
   </a>
   <ul class="nav-links-sub">
     <li><a href="#coaching">Coaching</a></li>
     <li><a href="#etiquette">Lawn Etiquette</a></li>
-    <li><a href="#" class="nav-cta-sub" onclick="history.length > 1 ? history.back() : window.location='index.html'; return false;">Back to Main Site</a></li>
+    <li><a href="index.html" class="nav-cta-sub">Back to Main Site</a></li>
   </ul>
 </nav>
 <div class="page-header">
