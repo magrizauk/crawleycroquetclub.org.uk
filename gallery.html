@@ -231,7 +231,9 @@
 
 <!-- NAV -->
 <nav>
-  <a class="nav-home" href="index.html">&larr; Crawley Croquet Club</a>
+  <a class="nav-logo-wrap" href="index.html" style="display:flex;align-items:center;text-decoration:none;">
+    <img src="images/Line_CCC.svg" alt="Crawley Croquet Club" style="height:28px;width:auto;display:block;" />
+  </a>
   <div class="nav-right">
     <a class="nav-back-gallery" id="navBackGallery" href="#">&larr; All Collections</a>
     <button class="nav-admin-btn" id="adminBtn">Admin Login</button>
@@ -314,10 +316,17 @@
 
 <!-- FOOTER -->
 <footer>
-  <p>&copy; 2025 Crawley Croquet Club</p>
-  <p>Worth Park, Crawley, West Sussex</p>
-  <p><a href="index.html">Back to main site</a> &middot; <a href="policies.html">Privacy &amp; Safeguarding</a></p>
+  <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+    <img src="images/Line_CCC.svg" alt="Crawley Croquet Club" style="height:20px;width:auto;opacity:0.5;filter:invert(1);" />
+    <p style="color:rgba(247,243,234,0.35);font-size:0.88rem;font-weight:300;">&copy; <span class="yr-span">2025</span> Crawley Croquet Club &middot; Worth Park, Crawley, West Sussex</p>
+  </div>
+  <p style="color:rgba(247,243,234,0.35);font-size:0.88rem;font-weight:300;">
+    <a href="#" onclick="history.length > 1 ? history.back() : window.location='index.html'; return false;" style="color:rgba(247,243,234,0.5);text-decoration:none;">Main site</a>
+    &middot;
+    <a href="policies.html" style="color:rgba(247,243,234,0.5);text-decoration:none;">Privacy &amp; Safeguarding</a>
+  </p>
 </footer>
+<script>document.querySelectorAll('.yr-span').forEach(function(el){el.textContent=new Date().getFullYear();});</script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
