@@ -13,16 +13,17 @@ const SHELL_CACHE    = `${CACHE_VERSION}-shell`;
 const DYNAMIC_CACHE  = `${CACHE_VERSION}-dynamic`;
 
 // Resources to pre-cache on install (the app shell).
-// Keep this list lean — only what's needed to render the page offline.
+// Paths are relative to the SW scope (the repo subdirectory on GitHub Pages,
+// or the root once the custom domain is live — no change needed either way).
 const SHELL_URLS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
+  './',
+  './index.html',
+  './manifest.json',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
   // SVG logos (adjust paths to match your repo structure)
-  '/Stacked_CCC.svg',
-  '/Line_CCC.svg',
+  './Stacked_CCC.svg',
+  './Line_CCC.svg',
 ];
 
 // Domains whose requests should always go network-first.
