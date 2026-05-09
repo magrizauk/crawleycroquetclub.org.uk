@@ -25,23 +25,11 @@
 
   <!-- Mobile theme colour -->
   <meta name="theme-color" content="#1a3a2a" />
-
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('sw.js')
-          .then(function (reg) { console.log('SW registered:', reg.scope); })
-          .catch(function (err) { console.warn('SW registration failed:', err); });
-      });
-    }
-  </script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getMessaging, getToken, deleteToken } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCNF0Frimcii1tdnP9bQRodKUcI8uLJst0",
@@ -52,15 +40,78 @@
       appId: "1:460114961964:web:48df356888cd2d058d1389"
     };
 
-    const app   = initializeApp(firebaseConfig);
-    const db    = getFirestore(app);
-    const auth  = getAuth(app);
+    // VAPID key — Firebase Console → Project Settings → Cloud Messaging → Web Push certificates
+    // Replace this placeholder once you have generated the key pair.
+    const VAPID_KEY = 'BBmXVtX6tj25y1PvqrntiOUz5cwvKKgObu_ooyg3czJhiwy6SWSlfugYjICeI7CT3zPwdfKR4BRfvpk6V-hEBl8';
+
+    const app       = initializeApp(firebaseConfig);
+    const db        = getFirestore(app);
+    const auth      = getAuth(app);
+    const messaging = getMessaging(app);
 
     // Expose to global scope for the main script
-    window._db   = db;
-    window._auth = auth;
-    window._fsModules = { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot };
+    window._db        = db;
+    window._auth      = auth;
+    window._messaging = messaging;
+    window._fsModules = { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot, setDoc };
     window._authModules = { signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail };
+
+    // ── Push notification subscription ───────────────────────────────────────
+    async function subscribeToPush() {
+      try {
+        const token = await getToken(messaging, {
+          vapidKey: VAPID_KEY,
+          serviceWorkerRegistration: await navigator.serviceWorker.ready
+        });
+        if (token) {
+          // Store token in Firestore — token as doc ID makes it idempotent.
+          await setDoc(doc(db, 'fcm_tokens', token), {
+            token:     token,
+            createdAt: new Date().toISOString(),
+            userAgent: navigator.userAgent
+          });
+          window._pushSubscribed = true;
+          updateNotificationButton(true);
+        }
+      } catch (err) {
+        console.warn('Push subscription failed:', err);
+      }
+    }
+
+    async function unsubscribeFromPush() {
+      try {
+        const token = await getToken(messaging, {
+          vapidKey: VAPID_KEY,
+          serviceWorkerRegistration: await navigator.serviceWorker.ready
+        });
+        if (token) {
+          await deleteToken(messaging);
+          const fs = window._fsModules;
+          await fs.deleteDoc ? fs.deleteDoc(fs.doc(db, 'fcm_tokens', token))
+                             : window._fsModules.deleteDoc(window._fsModules.doc(db, 'fcm_tokens', token));
+        }
+        window._pushSubscribed = false;
+        updateNotificationButton(false);
+      } catch (err) {
+        console.warn('Push unsubscribe failed:', err);
+      }
+    }
+
+    function updateNotificationButton(subscribed) {
+      var btn = document.getElementById('notifBtn');
+      if (!btn) return;
+      btn.textContent = subscribed ? '\uD83D\uDD14 Notifications On' : '\uD83D\uDD14 Get Notifications';
+      btn.classList.toggle('notif-active', subscribed);
+    }
+
+    window._pushSubscribe   = subscribeToPush;
+    window._pushUnsubscribe = unsubscribeFromPush;
+
+    // On load, re-register token if permission already granted (handles token rotation).
+    window.addEventListener('load', function () {
+      if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
+      if (Notification.permission === 'granted') subscribeToPush();
+    });
 
     // Auth state listener
     onAuthStateChanged(auth, function(user) {
@@ -141,6 +192,9 @@
     .nav-links a:hover { color: var(--green-mid); }  /* colour handled separately */
     .nav-cta { background: var(--green-deep); color: var(--cream) !important; padding: 0.5rem 1.3rem !important; border-radius: 2px; font-size: 1rem; box-shadow: none !important; line-height: 1; }
     .nav-cta:hover { background: var(--green-mid) !important; color: var(--cream) !important; }
+    .notif-btn { background: transparent; border: 1.5px solid var(--green-light); color: var(--green-deep); padding: 0.4rem 1rem; border-radius: 2px; font-size: 0.82rem; font-family: var(--sans); letter-spacing: 0.05em; cursor: pointer; transition: background 0.2s, color 0.2s; white-space: nowrap; }
+    .notif-btn:hover, .notif-btn.notif-active { background: var(--green-deep); color: var(--cream); border-color: var(--green-deep); }
+    nav.scrolled-past-hero .notif-btn { border-color: var(--green-deep); }
     .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
     .hamburger span { display: block; width: 24px; height: 2px; background: var(--green-deep); }
 
@@ -677,6 +731,16 @@
     <li><a href="#calendar">Events</a></li>
     <li><a href="#location">Find Us</a></li>
     <li><a href="private-events.html">Private Events</a></li>
+    <li><button class="notif-btn" id="notifBtn" onclick="
+      if(typeof window._pushSubscribe === 'undefined') return;
+      if(Notification.permission === 'granted' && window._pushSubscribed) {
+        window._pushUnsubscribe();
+      } else {
+        Notification.requestPermission().then(function(p){
+          if(p === 'granted') window._pushSubscribe();
+        });
+      }
+    ">🔔 Get Notifications</button></li>
     <li><a href="#contact-form" class="nav-cta">Get In Touch</a></li>
   </ul>
   <div class="hamburger" id="hamburger">

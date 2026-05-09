@@ -8,7 +8,7 @@
 // caches to be cleared on the next visit.
 // ─────────────────────────────────────────────────────────────────────────────
 
-const CACHE_VERSION  = 'ccc-v2';
+const CACHE_VERSION  = 'ccc-v3';
 const SHELL_CACHE    = `${CACHE_VERSION}-shell`;
 const DYNAMIC_CACHE  = `${CACHE_VERSION}-dynamic`;
 
@@ -25,6 +25,8 @@ const SHELL_URLS = [
 const NETWORK_FIRST_HOSTS = [
   'firestore.googleapis.com',
   'firebase.googleapis.com',
+  'fcmregistrations.googleapis.com',   // FCM token registration
+  'fcm.googleapis.com',                // FCM message delivery
   'identitytoolkit.googleapis.com',
   'www.gstatic.com',           // Firebase SDK CDN
   'fonts.googleapis.com',
@@ -130,26 +132,47 @@ function networkFirst(request, cacheName) {
 }
 
 
-// ─── Push Notifications (placeholder — Phase 2) ──────────────────────────────
-// When you're ready to add push notifications via Firebase Cloud Messaging,
-// the handler goes here. The Service Worker is already registered and in place,
-// so enabling push will require only adding the FCM SDK and this handler.
-//
-// self.addEventListener('push', function (event) {
-//   var data = event.data ? event.data.json() : {};
-//   event.waitUntil(
-//     self.registration.showNotification(data.title || 'Crawley Croquet Club', {
-//       body:  data.body  || 'New club update',
-//       icon:  '/icons/icon-192.png',
-//       badge: '/icons/icon-192.png',
-//       data:  { url: data.url || '/#calendar' },
-//     })
-//   );
-// });
-//
-// self.addEventListener('notificationclick', function (event) {
-//   event.notification.close();
-//   event.waitUntil(
-//     clients.openWindow(event.notification.data.url)
-//   );
-// });
+// ─── Push Notifications ──────────────────────────────────────────────────────
+
+self.addEventListener('push', function (event) {
+  var data = {};
+  try { data = event.data ? event.data.json() : {}; } catch (e) {}
+
+  var title   = data.title || 'Crawley Croquet Club';
+  var options = {
+    body:    data.body  || 'New club update',
+    icon:    './icons/icon-192.png',
+    badge:   './icons/icon-192.png',
+    tag:     data.tag   || 'ccc-notification',   // replaces previous notification of same tag
+    renotify: true,
+    data:    { url: data.url || './#calendar' },
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(title, options)
+  );
+});
+
+self.addEventListener('notificationclick', function (event) {
+  event.notification.close();
+  var targetUrl = (event.notification.data && event.notification.data.url)
+    ? event.notification.data.url
+    : './#calendar';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then(function (clientList) {
+        // If the site is already open, focus it and navigate.
+        for (var i = 0; i < clientList.length; i++) {
+          var client = clientList[i];
+          if ('focus' in client) {
+            client.focus();
+            client.navigate(targetUrl);
+            return;
+          }
+        }
+        // Otherwise open a new window.
+        if (clients.openWindow) return clients.openWindow(targetUrl);
+      })
+  );
+});
