@@ -2170,8 +2170,18 @@
       fs.onSnapshot(docRef, function (snap) {
         if (!snap.exists()) return;
         var data = snap.data();
-        // Ignore the initial load and any doc we've already handled.
-        if (lastSeen === null) { lastSeen = data.updatedAt; return; }
+
+        if (lastSeen === null) {
+          // On initial load — check if the notification is recent (within 30s).
+          // If so, show the toast (handles notification tap opening a fresh page).
+          var age = data.updatedAt
+            ? (Date.now() - new Date(data.updatedAt).getTime())
+            : Infinity;
+          lastSeen = data.updatedAt;
+          if (age < 60000) handleNotification(data, data.action);
+          return;
+        }
+
         if (data.updatedAt === lastSeen) return;
         lastSeen = data.updatedAt;
         handleNotification(data, data.action);

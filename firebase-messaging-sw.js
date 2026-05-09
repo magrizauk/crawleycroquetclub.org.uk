@@ -31,3 +31,25 @@ messaging.onBackgroundMessage(function (payload) {
     data:      { url: 'https://magrizauk.github.io/crawleycroquetclub.org.uk/#calendar' },
   });
 });
+
+// Handle notification tap — focus existing window or open a new one.
+self.addEventListener('notificationclick', function (event) {
+  event.notification.close();
+  var targetUrl = (event.notification.data && event.notification.data.url)
+    ? event.notification.data.url
+    : 'https://magrizauk.github.io/crawleycroquetclub.org.uk/#calendar';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then(function (clientList) {
+        for (var i = 0; i < clientList.length; i++) {
+          var client = clientList[i];
+          if ('focus' in client) {
+            client.focus();
+            return;
+          }
+        }
+        if (clients.openWindow) return clients.openWindow(targetUrl);
+      })
+  );
+});
