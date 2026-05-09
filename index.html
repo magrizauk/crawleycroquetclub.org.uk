@@ -1996,7 +1996,8 @@
 
   // ── Notification tap handler ───────────────────────────────────────────────
   // When a push notification is tapped, the Cloud Function appends event
-  // details as URL query parameters. We read them here and open the view modal.
+  // details as URL query parameters. We read them here, navigate the calendar
+  // to the correct month, and open the view modal.
   (function () {
     function openFromParams() {
       var hash   = window.location.hash || '';
@@ -2013,16 +2014,27 @@
         notes: params.get('notes') || '',
       };
 
-      // Scroll to calendar first, then open the modal.
+      // Navigate the calendar to the event's month/year.
+      if (ev.date) {
+        var parts = ev.date.split('-');
+        if (parts.length === 3) {
+          viewYear  = parseInt(parts[0], 10);
+          viewMonth = parseInt(parts[1], 10) - 1;
+          renderCalendar();
+        }
+      }
+
+      // Scroll to calendar section.
       var calSection = document.getElementById('calendar');
       if (calSection) calSection.scrollIntoView({ behavior: 'smooth' });
 
-      // Short delay to let the calendar render before opening the modal.
+      // Wait for Firestore onSnapshot to populate events for the month,
+      // then open the modal. 1200ms gives the listener time to load.
       setTimeout(function () {
         if (typeof openViewEvent === 'function') {
           openViewEvent(ev);
         }
-      }, 600);
+      }, 1200);
 
       // Clean the URL so refreshing does not re-open the modal.
       window.history.replaceState({}, '', window.location.pathname + '#calendar');
