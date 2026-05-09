@@ -67,7 +67,7 @@ async function sendToAll(title, body, tag) {
           tag,
           renotify: true,
         },
-        fcmOptions: { link: 'https://crawleycroquetclub.org.uk/#calendar' },
+        fcmOptions: { link: 'https://magrizauk.github.io/crawleycroquetclub.org.uk/#calendar' },
       },
     });
 
