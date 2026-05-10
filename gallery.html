@@ -376,6 +376,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js";
   import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getStorage, ref, uploadBytesResumable, getDownloadURL, listAll, deleteObject, getMetadata } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
@@ -389,6 +390,13 @@
   };
 
   const app     = initializeApp(firebaseConfig);
+
+  // Initialise App Check with reCAPTCHA v3 before any other Firebase service.
+  initializeAppCheck(app, {
+    provider: new ReCaptchaV3Provider('6LcuOOMsAAAAANCF3g0fMt100BsC0U9EVc3bIZWs'),
+    isTokenAutoRefreshEnabled: true,
+  });
+
   const auth    = getAuth(app);
   const storage = getStorage(app);
 
