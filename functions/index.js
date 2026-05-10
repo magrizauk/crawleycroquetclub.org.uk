@@ -15,20 +15,6 @@ initializeApp();
 
 const db = getFirestore();
 
-// Writes a notification document to Firestore so the page's onSnapshot
-// listener can react in real time and open the event modal.
-// Uses a single doc 'latest' to avoid accumulating data indefinitely.
-async function writeNotification(action, data) {
-  await db.collection('notifications').doc('latest').set({
-    action:    action,
-    title:     data.title  || '',
-    type:      data.type   || '',
-    date:      data.date   || '',
-    notes:     data.notes  || '',
-    updatedAt: new Date().toISOString(),
-  });
-}
-
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function eventTypeLabel(type) {
@@ -81,7 +67,7 @@ async function sendToAll(title, body, tag) {
           tag,
           renotify: true,
         },
-        fcmOptions: { link: 'https://magrizauk.github.io/crawleycroquetclub.org.uk/#calendar' },
+        fcmOptions: { link: 'https://crawleycroquetclub.org.uk/#calendar' },
       },
     });
 
@@ -112,11 +98,8 @@ exports.onEventCreated = onDocumentCreated('events/{eventId}', async (event) => 
   const label = eventTypeLabel(data.type);
   const date  = formatDate(data.date);
   const title = `New ${label} Added`;
-  const body  = `${data.title}${date ? ' – ' + date : ''}`;
-  await Promise.all([
-    sendToAll(title, body, 'ccc-event-created'),
-    writeNotification('created', data),
-  ]);
+  const body  = `${data.title}${date ? ' — ' + date : ''}`;
+  await sendToAll(title, body, 'ccc-event-created');
 });
 
 exports.onEventUpdated = onDocumentUpdated('events/{eventId}', async (event) => {
@@ -124,11 +107,8 @@ exports.onEventUpdated = onDocumentUpdated('events/{eventId}', async (event) => 
   const label = eventTypeLabel(data.type);
   const date  = formatDate(data.date);
   const title = `${label} Updated`;
-  const body  = `${data.title}${date ? ' – ' + date : ''}`;
-  await Promise.all([
-    sendToAll(title, body, 'ccc-event-updated'),
-    writeNotification('updated', data),
-  ]);
+  const body  = `${data.title}${date ? ' — ' + date : ''}`;
+  await sendToAll(title, body, 'ccc-event-updated');
 });
 
 exports.onEventDeleted = onDocumentDeleted('events/{eventId}', async (event) => {
@@ -136,9 +116,6 @@ exports.onEventDeleted = onDocumentDeleted('events/{eventId}', async (event) => 
   const label = eventTypeLabel(data.type);
   const date  = formatDate(data.date);
   const title = `${label} Cancelled`;
-  const body  = `${data.title}${date ? ' – ' + date : ''} has been removed from the calendar.`;
-  await Promise.all([
-    sendToAll(title, body, 'ccc-event-deleted'),
-    writeNotification('deleted', data),
-  ]);
+  const body  = `${data.title}${date ? ' — ' + date : ''} has been removed from the calendar.`;
+  await sendToAll(title, body, 'ccc-event-deleted');
 });
