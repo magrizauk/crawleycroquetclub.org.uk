@@ -196,6 +196,7 @@
       opacity: 0; transform: translateY(-6px);
       transition: opacity 0.35s ease, transform 0.35s ease;
     }
+    .mobile-favicon { display: none; height: 36px; width: 36px; }
     nav.scrolled-past-hero .svg-logo-nav { opacity: 1; transform: translateY(0); }
     nav.scrolled-past-hero .svg-logo-nav {
       opacity: 1; transform: translateY(0);
@@ -583,7 +584,9 @@
     /* RESPONSIVE */
     @media (max-width: 900px) {
       /* nav collapse handled by JS via .nav-collapsed class */
-      .svg-logo-nav { height: 36px; }
+      .svg-logo-nav { display: none; }
+      .mobile-favicon { display: block; }
+      nav.scrolled-past-hero .mobile-favicon { display: block; }
       #hero { padding: 6rem 2rem 4rem; min-height: 90vh; }
       .hero-logo {
       display: block;
@@ -661,7 +664,7 @@
 <!-- NAV -->
 <a href="#about" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" onfocus="this.style.cssText='position:fixed;top:0;left:0;width:auto;height:auto;overflow:visible;background:var(--green-deep);color:var(--cream);padding:0.8rem 1.5rem;z-index:9999;font-family:sans-serif;font-weight:700;'">Skip to main content</a>
 <nav aria-label="Main navigation">
-  <a class="nav-logo-wrap" href="#"><img src="logo/logo_line_dark.svg" alt="Crawley Croquet Club" class="svg-logo-nav" /></a>
+  <a class="nav-logo-wrap" href="#"><img src="logo/logo_line_dark.svg" alt="Crawley Croquet Club" class="svg-logo-nav" /><img src="icons/favicon.svg" alt="CCC" class="mobile-favicon" /></a>
   <ul class="nav-links" id="navLinks">
     <li><a href="#about">About</a></li>
     <li><a href="#schedule">Play Days</a></li>
