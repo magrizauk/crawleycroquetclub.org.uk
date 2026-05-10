@@ -28,7 +28,7 @@ messaging.onBackgroundMessage(function (payload) {
     badge:     './icons/icon-192.png',
     tag:       'ccc-notification',
     renotify:  true,
-    data:      { url: 'https://magrizauk.github.io/crawleycroquetclub.org.uk/#calendar' },
+    data:      { url: 'https://crawleycroquetclub.org.uk/#calendar' },
   });
 });
 
@@ -37,7 +37,7 @@ self.addEventListener('notificationclick', function (event) {
   event.notification.close();
   var targetUrl = (event.notification.data && event.notification.data.url)
     ? event.notification.data.url
-    : 'https://magrizauk.github.io/crawleycroquetclub.org.uk/#calendar';
+    : 'https://crawleycroquetclub.org.uk/#calendar';
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true })

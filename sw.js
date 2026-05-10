@@ -155,7 +155,7 @@ self.addEventListener('push', function (event) {
 
 self.addEventListener('notificationclick', function (event) {
   event.notification.close();
-  var targetUrl = 'https://magrizauk.github.io/crawleycroquetclub.org.uk/#calendar';
+  var targetUrl = 'https://crawleycroquetclub.org.uk/#calendar';
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true })
