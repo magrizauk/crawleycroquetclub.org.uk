@@ -8,7 +8,7 @@
 // caches to be cleared on the next visit.
 // ─────────────────────────────────────────────────────────────────────────────
 
-const CACHE_VERSION  = 'ccc-v8';
+const CACHE_VERSION  = 'ccc-v9';
 const SHELL_CACHE    = `${CACHE_VERSION}-shell`;
 const DYNAMIC_CACHE  = `${CACHE_VERSION}-dynamic`;
 
@@ -85,6 +85,13 @@ self.addEventListener('fetch', function (event) {
 
   // Network-first for Firebase and third-party hosts.
   if (NETWORK_FIRST_HOSTS.some(function (host) { return url.hostname === host; })) {
+    event.respondWith(networkFirst(event.request, DYNAMIC_CACHE));
+    return;
+  }
+
+  // Network-first for same-origin images so updated files are picked up
+  // without requiring a hard refresh or cache version bump.
+  if (url.origin === self.location.origin && url.pathname.startsWith('/images/')) {
     event.respondWith(networkFirst(event.request, DYNAMIC_CACHE));
     return;
   }
